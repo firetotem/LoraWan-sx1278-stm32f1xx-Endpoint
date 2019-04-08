@@ -6,10 +6,13 @@ extern "C"
 {
 #endif
 
-  /* Exported types ------------------------------------------------------------*/
-  /* External variables --------------------------------------------------------*/
-  /* Exported macros -----------------------------------------------------------*/
-  /* Exported functions ------------------------------------------------------- */
+#include <stdarg.h>
+#include "console_conf.h"
+
+/* Exported types ------------------------------------------------------------*/
+/* External variables --------------------------------------------------------*/
+/* Exported macros -----------------------------------------------------------*/
+/* Exported functions ------------------------------------------------------- */
 
   /**
    * @brief TraceInit Initializes Logging feature.
@@ -25,7 +28,7 @@ extern "C"
    * @param:  None
    * @retval: 0 when ok, -1 when circular queue is full
    */
-  int32_t ConsoleSend( const char *strFormat, ...);
+  int32_t TraceSend( const char *strFormat, ...);
 
   /**
    * @brief  TraceGetFileName: Return filename string extracted from full path information

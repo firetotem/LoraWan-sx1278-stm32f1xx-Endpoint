@@ -1,5 +1,6 @@
 #include "hw.h"
 #include "vcom.h"
+#include "utilities.h"
 
 /*!
  *  \brief Unique Devices IDs register set ( STM32L1xxx )
@@ -52,7 +53,7 @@ static bool AdcInitialized = false;
  */
 static bool McuInitialized = false;
 
-static void (*txC)(void);
+
 
 /**
   * @brief This function initializes the hardware
@@ -76,11 +77,9 @@ void HW_Init( void )
 
     //HW_RTC_Init( ); // TODO
 
-    //TraceInit( ); TODO
+    ConsoleInit();
 
     // BSP_sensor_Init( ); TODO
-
-    vcom_Init(txC);
 
     McuInitialized = true;
   }

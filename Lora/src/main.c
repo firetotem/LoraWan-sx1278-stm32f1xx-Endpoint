@@ -1,6 +1,6 @@
 #include <stddef.h>
 #include "hw.h"
-#include "vcom.h"
+#include "utilities.h"
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -9,18 +9,20 @@ uint8_t txBuff[255] = "Hello usart terminal!\n";
 
 
 int main(void) {
+
 	HAL_Init();
 	SystemClock_Config();
 	HW_Init();
 
-	vcom_Trace(txBuff, 20);
+	LOG("Hello idx = %d\n\r", 10);
 
-
-
-
+	uint8_t idx = 0;
+	LOG("Hello idx = %d\n\r", idx++);
 
 	while (1) {
 
+	    LOG("Hello idx = %d\n\r", idx++);
+	    HAL_Delay(1000);
 	}
 
 }

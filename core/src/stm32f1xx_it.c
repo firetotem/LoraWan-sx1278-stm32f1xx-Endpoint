@@ -29,6 +29,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_it.h"
+#include "vcom.h"
 
 /** @addtogroup IO_Toggle
   * @{
@@ -159,6 +160,15 @@ void SysTick_Handler(void)
 /*void PPP_IRQHandler(void)
 {
 }*/
+
+void WWDG_IRQHandler( void )
+{
+  __IO uint8_t i = 100;
+  UNUSED(i);
+}
+
+
+
 void USARTx_IRQHandler( void )
 {
   vcom_IRQHandler();
