@@ -30,7 +30,7 @@ void HW_SPI_Init( void )
 
   hspi.Instance = SPI1;
 
-  hspi.Init.BaudRatePrescaler 	= SpiFrequency( 10000000 );
+  hspi.Init.BaudRatePrescaler 		= SpiFrequency( 10000000 );
   hspi.Init.Direction      		= SPI_DIRECTION_2LINES;
   hspi.Init.Mode           		= SPI_MODE_MASTER;
   hspi.Init.CLKPolarity    		= SPI_POLARITY_LOW;

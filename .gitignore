@@ -1,2 +1,4 @@
 Debug/*
 .\settings/**
+/Debug/
+blinky.elf.launch

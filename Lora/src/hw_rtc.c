@@ -52,19 +52,19 @@ typedef struct
 /* Private define ------------------------------------------------------------*/
 
 /* MCU Wake Up Time */
-#define MIN_ALARM_DELAY               3 /* in ticks */
+#define MIN_ALARM_DELAY               	3 /* in ticks */
 
 /* subsecond number of bits */
-#define N_PREDIV_S                 10
+#define N_PREDIV_S                 	10
 
 /* Synchonuous prediv  */
-#define PREDIV_S                  ((1<<N_PREDIV_S)-1)
+#define PREDIV_S                  	((1<<N_PREDIV_S)-1)
 
 /* Asynchonuous prediv   */
-#define PREDIV_A                  (1<<(15-N_PREDIV_S))-1
+#define PREDIV_A                  	(1<<(15-N_PREDIV_S))-1
 
 /* Sub-second mask definition  */
-#define HW_RTC_ALARMSUBSECONDMASK (N_PREDIV_S<<RTC_ALRMASSR_MASKSS_Pos)
+//TODO#define HW_RTC_ALARMSUBSECONDMASK 	(N_PREDIV_S<<RTC_ALRMASSR_MASKSS_Pos)
 
 /* RTC Time base in us */
 #define USEC_NUMBER               1000000
@@ -170,12 +170,12 @@ static void HW_RTC_SetConfig( void )
 
   RtcHandle.Instance = RTC;
 
-  RtcHandle.Init.HourFormat = RTC_HOURFORMAT_24;
+  //TODO  RtcHandle.Init.HourFormat = RTC_HOURFORMAT_24;
   RtcHandle.Init.AsynchPrediv = PREDIV_A; /* RTC_ASYNCH_PREDIV; */
-  RtcHandle.Init.SynchPrediv = PREDIV_S; /* RTC_SYNCH_PREDIV; */
-  RtcHandle.Init.OutPut = RTC_OUTPUT;
-  RtcHandle.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
-  RtcHandle.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+  //TODO  RtcHandle.Init.SynchPrediv = PREDIV_S; /* RTC_SYNCH_PREDIV; */
+  //TODO  RtcHandle.Init.OutPut = RTC_OUTPUT;
+  //TODO  RtcHandle.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
+  //TODO  RtcHandle.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
 
   HAL_RTC_Init( &RtcHandle );
 
@@ -191,10 +191,10 @@ static void HW_RTC_SetConfig( void )
   RTC_TimeStruct.Minutes = 0;
 
   RTC_TimeStruct.Seconds = 0;
-  RTC_TimeStruct.TimeFormat = 0;
-  RTC_TimeStruct.SubSeconds = 0;
-  RTC_TimeStruct.StoreOperation = RTC_DAYLIGHTSAVING_NONE;
-  RTC_TimeStruct.DayLightSaving = RTC_STOREOPERATION_RESET;
+  //TODO  RTC_TimeStruct.TimeFormat = 0;
+  //TODO  RTC_TimeStruct.SubSeconds = 0;
+  //TODO  RTC_TimeStruct.StoreOperation = RTC_DAYLIGHTSAVING_NONE;
+  //TODO  RTC_TimeStruct.DayLightSaving = RTC_STOREOPERATION_RESET;
 
   HAL_RTC_SetTime(&RtcHandle , &RTC_TimeStruct, RTC_FORMAT_BIN);
 
@@ -209,32 +209,32 @@ static void HW_RTC_SetConfig( void )
  * @param none
  * @retval none
  */
-void HW_RTC_setMcuWakeUpTime( void )
-{
-  RTC_TimeTypeDef RTC_TimeStruct;
-  RTC_DateTypeDef RTC_DateStruct;
-
-  TimerTime_t now, hit;
-  int16_t McuWakeUpTime;
-
-  if ((McuWakeUpTimeInitialized == false) &&
-      ( HAL_NVIC_GetPendingIRQ( RTC_Alarm_IRQn ) == 1))
-  { /* warning: works ok if now is below 30 days
-       it is ok since it's done once at first alarm wake-up*/
-    McuWakeUpTimeInitialized = true;
-    now = (uint32_t) HW_RTC_GetCalendarValue( &RTC_DateStruct, &RTC_TimeStruct );
-
-    HAL_RTC_GetAlarm(&RtcHandle, &RTC_AlarmStructure, RTC_ALARM_A, RTC_FORMAT_BIN );
-    hit = RTC_AlarmStructure.AlarmTime.Seconds+
-          60*(RTC_AlarmStructure.AlarmTime.Minutes+
-          60*(RTC_AlarmStructure.AlarmTime.Hours+
-          24*(RTC_AlarmStructure.AlarmDateWeekDay)));
-    hit = ( hit << N_PREDIV_S ) + (PREDIV_S - RTC_AlarmStructure.AlarmTime.SubSeconds);
-
-    McuWakeUpTime = (int16_t) ((now-hit));
-    McuWakeUpTimeCal += McuWakeUpTime;
-  }
-}
+//void HW_RTC_setMcuWakeUpTime( void )
+//{
+//  RTC_TimeTypeDef RTC_TimeStruct;
+//  RTC_DateTypeDef RTC_DateStruct;
+//
+//  TimerTime_t now, hit;
+//  int16_t McuWakeUpTime;
+//
+//  if ((McuWakeUpTimeInitialized == false) &&
+//      ( HAL_NVIC_GetPendingIRQ( RTC_Alarm_IRQn ) == 1))
+//  { /* warning: works ok if now is below 30 days
+//       it is ok since it's done once at first alarm wake-up*/
+//    McuWakeUpTimeInitialized = true;
+//    now = (uint32_t) HW_RTC_GetCalendarValue( &RTC_DateStruct, &RTC_TimeStruct );
+//
+//    HAL_RTC_GetAlarm(&RtcHandle, &RTC_AlarmStructure, RTC_ALARM_A, RTC_FORMAT_BIN );
+////    hit = RTC_AlarmStructure.AlarmTime.Seconds+
+////          60*(RTC_AlarmStructure.AlarmTime.Minutes+
+////          60*(RTC_AlarmStructure.AlarmTime.Hours+
+////          24*(RTC_AlarmStructure.AlarmDateWeekDay)));
+//    //TODO   hit = ( hit << N_PREDIV_S ) + (PREDIV_S - RTC_AlarmStructure.AlarmTime.SubSeconds);
+//
+//    McuWakeUpTime = (int16_t) ((now-hit));
+//    McuWakeUpTimeCal += McuWakeUpTime;
+//  }
+//}
 
 int16_t HW_RTC_getMcuWakeUpTime( void )
 {
@@ -256,24 +256,24 @@ uint32_t HW_RTC_GetMinimumTimeout( void )
  * @param [IN] time in milliseconds
  * @retval returns time in timer ticks
  */
-uint32_t HW_RTC_ms2Tick( TimerTime_t timeMilliSec )
-{
-/*return( ( timeMicroSec / RTC_ALARM_TIME_BASE ) ); */
-  return ( uint32_t) ( ( ((uint64_t)timeMilliSec) * CONV_DENOM ) / CONV_NUMER );
-}
+//uint32_t HW_RTC_ms2Tick( TimerTime_t timeMilliSec )
+//{
+///*return( ( timeMicroSec / RTC_ALARM_TIME_BASE ) ); */
+//  return ( uint32_t) ( ( ((uint64_t)timeMilliSec) * CONV_DENOM ) / CONV_NUMER );
+//}
 
 /*!
  * @brief converts time in ticks to time in ms
  * @param [IN] time in timer ticks
  * @retval returns time in milliseconds
  */
-TimerTime_t HW_RTC_Tick2ms( uint32_t tick )
-{
-/*return( ( timeMicroSec * RTC_ALARM_TIME_BASE ) ); */
-  uint32_t seconds = tick>>N_PREDIV_S;
-  tick = tick&PREDIV_S;
-  return  ( ( seconds*1000 ) + ((tick*1000)>>N_PREDIV_S) );
-}
+//TimerTime_t HW_RTC_Tick2ms( uint32_t tick )
+//{
+///*return( ( timeMicroSec * RTC_ALARM_TIME_BASE ) ); */
+//  uint32_t seconds = tick>>N_PREDIV_S;
+//  tick = tick&PREDIV_S;
+//  return  ( ( seconds*1000 ) + ((tick*1000)>>N_PREDIV_S) );
+//}
 
 /*!
  * @brief Set the alarm
@@ -285,17 +285,17 @@ void HW_RTC_SetAlarm( uint32_t timeout )
   /* we don't go in Low Power mode for timeout below MIN_ALARM_DELAY */
   if ( (MIN_ALARM_DELAY + McuWakeUpTimeCal ) < ((timeout - HW_RTC_GetTimerElapsedTime( ) )) )
   {
-    LPM_SetStopMode(LPM_RTC_Id , LPM_Enable );
+      //TODO    LPM_SetStopMode(LPM_RTC_Id , LPM_Enable );
   }
   else
   {
-    LPM_SetStopMode(LPM_RTC_Id , LPM_Disable );
+      //TODO    LPM_SetStopMode(LPM_RTC_Id , LPM_Disable );
   }
 
   /*In case stop mode is required */
-  if( LPM_GetMode() == LPM_StopMode )
+  //TODO  if( LPM_GetMode() == LPM_StopMode )
   {
-    timeout = timeout -  McuWakeUpTimeCal;
+    //TODO    timeout = timeout -  McuWakeUpTimeCal;
   }
 
   HW_RTC_StartWakeUpAlarm( timeout );
@@ -306,15 +306,15 @@ void HW_RTC_SetAlarm( uint32_t timeout )
  * @param none
  * @retval RTC Elapsed time in ticks
  */
-uint32_t HW_RTC_GetTimerElapsedTime( void )
-{
-  RTC_TimeTypeDef RTC_TimeStruct;
-  RTC_DateTypeDef RTC_DateStruct;
-
-  uint32_t CalendarValue = (uint32_t) HW_RTC_GetCalendarValue(&RTC_DateStruct, &RTC_TimeStruct );
-
-  return( ( uint32_t )( CalendarValue - RtcTimerContext.Rtc_Time ));
-}
+//uint32_t HW_RTC_GetTimerElapsedTime( void )
+//{
+//  RTC_TimeTypeDef RTC_TimeStruct;
+//  RTC_DateTypeDef RTC_DateStruct;
+//
+//  uint32_t CalendarValue = (uint32_t) HW_RTC_GetCalendarValue(&RTC_DateStruct, &RTC_TimeStruct );
+//
+//  return( ( uint32_t )( CalendarValue - RtcTimerContext.Rtc_Time ));
+//}
 
 /*!
  * @brief Get the RTC timer value
@@ -355,7 +355,7 @@ void HW_RTC_IrqHandler ( void )
 {
   RTC_HandleTypeDef* hrtc=&RtcHandle;
   /* enable low power at irq*/
-  LPM_SetStopMode(LPM_RTC_Id , LPM_Enable );
+  //TODO  LPM_SetStopMode(LPM_RTC_Id , LPM_Enable );
 
   /* Clear the EXTI's line Flag for RTC Alarm */
   __HAL_RTC_ALARM_EXTI_CLEAR_FLAG();
@@ -382,14 +382,14 @@ void HW_RTC_IrqHandler ( void )
  */
 void HW_RTC_DelayMs( uint32_t delay )
 {
-  TimerTime_t delayValue = 0;
-  TimerTime_t timeout = 0;
+//  TimerTime_t delayValue = 0;
+//  TimerTime_t timeout = 0;
 
-  delayValue = HW_RTC_ms2Tick( delay );
+//  delayValue = HW_RTC_ms2Tick( delay );
 
   /* Wait delay ms */
-  timeout = HW_RTC_GetTimerValue( );
-  while( ( ( HW_RTC_GetTimerValue( ) - timeout ) ) < delayValue )
+//  timeout = HW_RTC_GetTimerValue( );
+//  while( ( ( HW_RTC_GetTimerValue( ) - timeout ) ) < delayValue )
   {
     __NOP( );
   }
@@ -400,11 +400,11 @@ void HW_RTC_DelayMs( uint32_t delay )
  * @param none
  * @retval Timer Value
  */
-uint32_t HW_RTC_SetTimerContext( void )
-{
-  RtcTimerContext.Rtc_Time = ( uint32_t ) HW_RTC_GetCalendarValue( &RtcTimerContext.RTC_Calndr_Date, &RtcTimerContext.RTC_Calndr_Time );
-  return ( uint32_t ) RtcTimerContext.Rtc_Time;
-}
+//uint32_t HW_RTC_SetTimerContext( void )
+//{
+//  RtcTimerContext.Rtc_Time = ( uint32_t ) HW_RTC_GetCalendarValue( &RtcTimerContext.RTC_Calndr_Date, &RtcTimerContext.RTC_Calndr_Time );
+//  return ( uint32_t ) RtcTimerContext.Rtc_Time;
+//}
 
 /*!
  * @brief Get the RTC timer Reference
@@ -446,7 +446,7 @@ static void HW_RTC_StartWakeUpAlarm( uint32_t timeoutValue )
   HW_RTC_StopAlarm( );
 
   /*reverse counter */
-  rtcAlarmSubSeconds =  PREDIV_S - RTC_TimeStruct.SubSeconds;
+  //TODO  rtcAlarmSubSeconds =  PREDIV_S - RTC_TimeStruct.SubSeconds;
   rtcAlarmSubSeconds += ( timeoutValue & PREDIV_S);
   /* convert timeout  to seconds */
   timeoutValue >>= N_PREDIV_S;  /* convert timeout  in seconds */
@@ -519,18 +519,18 @@ static void HW_RTC_StartWakeUpAlarm( uint32_t timeoutValue )
   }
 
   /* Set RTC_AlarmStructure with calculated values*/
-  RTC_AlarmStructure.AlarmTime.SubSeconds = PREDIV_S-rtcAlarmSubSeconds;
-  RTC_AlarmStructure.AlarmSubSecondMask  = HW_RTC_ALARMSUBSECONDMASK;
+//TODO  RTC_AlarmStructure.AlarmTime.SubSeconds = PREDIV_S-rtcAlarmSubSeconds;
+//TODO  RTC_AlarmStructure.AlarmSubSecondMask  = HW_RTC_ALARMSUBSECONDMASK;
   RTC_AlarmStructure.AlarmTime.Seconds = rtcAlarmSeconds;
   RTC_AlarmStructure.AlarmTime.Minutes = rtcAlarmMinutes;
   RTC_AlarmStructure.AlarmTime.Hours   = rtcAlarmHours;
-  RTC_AlarmStructure.AlarmDateWeekDay    = ( uint8_t )rtcAlarmDays;
-  RTC_AlarmStructure.AlarmTime.TimeFormat   = RTC_TimeStruct.TimeFormat;
-  RTC_AlarmStructure.AlarmDateWeekDaySel   = RTC_ALARMDATEWEEKDAYSEL_DATE;
-  RTC_AlarmStructure.AlarmMask       = RTC_ALARMMASK_NONE;
+  //TODO  RTC_AlarmStructure.AlarmDateWeekDay    = ( uint8_t )rtcAlarmDays;
+  //TODO  RTC_AlarmStructure.AlarmTime.TimeFormat   = RTC_TimeStruct.TimeFormat;
+  //TODO  RTC_AlarmStructure.AlarmDateWeekDaySel   = RTC_ALARMDATEWEEKDAYSEL_DATE;
+  //TODO  RTC_AlarmStructure.AlarmMask       = RTC_ALARMMASK_NONE;
   RTC_AlarmStructure.Alarm = RTC_ALARM_A;
-  RTC_AlarmStructure.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
-  RTC_AlarmStructure.AlarmTime.StoreOperation = RTC_STOREOPERATION_RESET;
+  //TODO  RTC_AlarmStructure.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+  //TODO  RTC_AlarmStructure.AlarmTime.StoreOperation = RTC_STOREOPERATION_RESET;
 
   /* Set RTC_Alarm */
   HAL_RTC_SetAlarm_IT( &RtcHandle, &RTC_AlarmStructure, RTC_FORMAT_BIN );
@@ -554,11 +554,11 @@ static uint64_t HW_RTC_GetCalendarValue( RTC_DateTypeDef* RTC_DateStruct, RTC_Ti
   HAL_RTC_GetTime( &RtcHandle, RTC_TimeStruct, RTC_FORMAT_BIN );
 
    /* make sure it is correct due to asynchronus nature of RTC*/
-  do {
-    first_read = RTC_TimeStruct->SubSeconds;
-    HAL_RTC_GetDate( &RtcHandle, RTC_DateStruct, RTC_FORMAT_BIN );
-    HAL_RTC_GetTime( &RtcHandle, RTC_TimeStruct, RTC_FORMAT_BIN );
-  } while (first_read != RTC_TimeStruct->SubSeconds);
+  //TODO do {
+      //TODO    first_read = RTC_TimeStruct->SubSeconds;
+  //TODO    HAL_RTC_GetDate( &RtcHandle, RTC_DateStruct, RTC_FORMAT_BIN );
+  //TODO    HAL_RTC_GetTime( &RtcHandle, RTC_TimeStruct, RTC_FORMAT_BIN );
+    //TODO  } while (first_read != RTC_TimeStruct->SubSeconds);
 
   /* calculte amount of elapsed days since 01/01/2000 */
   seconds= DIVC( (DAYS_IN_YEAR*3 + DAYS_IN_LEAP_YEAR)* RTC_DateStruct->Year , 4);
@@ -578,7 +578,7 @@ static uint64_t HW_RTC_GetCalendarValue( RTC_DateTypeDef* RTC_DateStruct, RTC_Ti
 
 
 
-  calendarValue = (((uint64_t) seconds)<<N_PREDIV_S) + ( PREDIV_S - RTC_TimeStruct->SubSeconds);
+  //TODO calendarValue = (((uint64_t) seconds)<<N_PREDIV_S) + ( PREDIV_S - RTC_TimeStruct->SubSeconds);
 
   return( calendarValue );
 }
@@ -608,50 +608,50 @@ uint32_t HW_RTC_GetCalendarTime( uint16_t *mSeconds)
 
 void HW_RTC_BKUPWrite( uint32_t Data0, uint32_t Data1)
 {
-  HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR0, Data0);
+  //TODO  HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR0, Data0);
   HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR1, Data1);
 }
 
 void HW_RTC_BKUPRead( uint32_t *Data0, uint32_t *Data1)
 {
-  *Data0=HAL_RTCEx_BKUPRead(&RtcHandle, RTC_BKP_DR0);
+  //TODO  *Data0=HAL_RTCEx_BKUPRead(&RtcHandle, RTC_BKP_DR0);
   *Data1=HAL_RTCEx_BKUPRead(&RtcHandle, RTC_BKP_DR1);
 }
 
-TimerTime_t RtcTempCompensation( TimerTime_t period, float temperature )
-{
-    float k = RTC_TEMP_COEFFICIENT;
-    float kDev = RTC_TEMP_DEV_COEFFICIENT;
-    float t = RTC_TEMP_TURNOVER;
-    float tDev = RTC_TEMP_DEV_TURNOVER;
-    float interim = 0.0;
-    float ppm = 0.0;
-
-    if( k < 0.0f )
-    {
-        ppm = ( k - kDev );
-    }
-    else
-    {
-        ppm = ( k + kDev );
-    }
-    interim = ( temperature - ( t - tDev ) );
-    ppm *=  interim * interim;
-
-    // Calculate the drift in time
-    interim = ( ( float ) period * ppm ) / 1000000;
-    // Calculate the resulting time period
-    interim += period;
-    interim = floor( interim );
-
-    if( interim < 0.0f )
-    {
-        interim = ( float )period;
-    }
-
-    // Calculate the resulting period
-    return ( TimerTime_t ) interim;
-}
+//TimerTime_t RtcTempCompensation( TimerTime_t period, float temperature )
+//{
+//    float k = RTC_TEMP_COEFFICIENT;
+//    float kDev = RTC_TEMP_DEV_COEFFICIENT;
+//    float t = RTC_TEMP_TURNOVER;
+//    float tDev = RTC_TEMP_DEV_TURNOVER;
+//    float interim = 0.0;
+//    float ppm = 0.0;
+//
+//    if( k < 0.0f )
+//    {
+//        ppm = ( k - kDev );
+//    }
+//    else
+//    {
+//        ppm = ( k + kDev );
+//    }
+//    interim = ( temperature - ( t - tDev ) );
+//    ppm *=  interim * interim;
+//
+//    // Calculate the drift in time
+//    interim = ( ( float ) period * ppm ) / 1000000;
+//    // Calculate the resulting time period
+//    interim += period;
+//    interim = floor( interim );
+//
+//    if( interim < 0.0f )
+//    {
+//        interim = ( float )period;
+//    }
+//
+//    // Calculate the resulting period
+//    return ( TimerTime_t ) interim;
+//}
 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

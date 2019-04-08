@@ -47,7 +47,7 @@ void Error_Handler( void );
 
 #define DBG( x ) do{  } while(0)
 
-#define DBG_RTC_OUTPUT RTC_OUTPUT_DISABLE;
+//TODO#define DBG_RTC_OUTPUT RTC_OUTPUT_DISABLE;
 
 #endif /* DEBUG */
 

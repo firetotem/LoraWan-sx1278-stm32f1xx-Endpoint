@@ -68,13 +68,13 @@
 
 /* --------------------------- RTC HW definition -------------------------------- */
 
-#define RTC_OUTPUT       		DBG_RTC_OUTPUT
+    //TODO#define RTC_OUTPUT       		DBG_RTC_OUTPUT
 
 /* --------------------------- USART HW definition -------------------------------*/
 #define USARTx                           USART2
-#define USARTx_CLK_ENABLE()              __USART2_CLK_ENABLE();
-#define USARTx_RX_GPIO_CLK_ENABLE()      __GPIOA_CLK_ENABLE()
-#define USARTx_TX_GPIO_CLK_ENABLE()      __GPIOA_CLK_ENABLE()
+#define USARTx_CLK_ENABLE()              __HAL_RCC_USART2_CLK_ENABLE()
+#define USARTx_RX_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOA_CLK_ENABLE()
+#define USARTx_TX_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOA_CLK_ENABLE()
 #define DMAx_CLK_ENABLE()                __HAL_RCC_DMA1_CLK_ENABLE()
 
 #define USARTx_FORCE_RESET()             __USART2_FORCE_RESET()
