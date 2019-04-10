@@ -6,6 +6,7 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include "stm32f1xx_hal.h"
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 
@@ -49,19 +50,21 @@
 #define DEVICE_SEL_PORT                           GPIOA
 #define DEVICE_SEL_PIN                            GPIO_PIN_4
 
-#define RADIO_LEDTX_PORT                           GPIOC
-#define RADIO_LEDTX_PIN                            GPIO_PIN_1
-
-#define RADIO_LEDRX_PORT                           GPIOC
-#define RADIO_LEDRX_PIN                            GPIO_PIN_0
+#define RADIO_LEDRX_PORT                          GPIOC
+#define RADIO_LEDRX_PIN                           GPIO_PIN_13
 
 #endif
 
 /* --------------------------- SPI MACRO redefinition -------------------------- */
 #define SPI_CLK_ENABLE()                __HAL_RCC_SPI1_CLK_ENABLE()
-
+#define SPIx				SPI1
+#define SPIx_SCLK_CLK_ENABLE()		__HAL_RCC_GPIOA_CLK_ENABLE()
+#define SPIx_MISO_CLK_ENABLE()		__HAL_RCC_GPIOA_CLK_ENABLE()
+#define SPIx_MOSI_CLK_ENABLE()		__HAL_RCC_GPIOA_CLK_ENABLE()
+#define SPIx_NSS_CLK_ENABLE()		__HAL_RCC_GPIOA_CLK_ENABLE()
 /* --------------------------- ADC HW definition ------------------------------- */
 #define ADC_READ_CHANNEL                ADC_CHANNEL_3
+#define ADCx				ADC1
 #define ADCCLK_ENABLE()                 __HAL_RCC_ADC1_CLK_ENABLE() ;
 #define ADCCLK_DISABLE()                __HAL_RCC_ADC1_CLK_DISABLE() ;
 
@@ -77,8 +80,8 @@
 #define USARTx_TX_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOA_CLK_ENABLE()
 #define DMAx_CLK_ENABLE()                __HAL_RCC_DMA1_CLK_ENABLE()
 
-#define USARTx_FORCE_RESET()             __USART2_FORCE_RESET()
-#define USARTx_RELEASE_RESET()           __USART2_RELEASE_RESET()
+#define USARTx_FORCE_RESET()             __HAL_RCC_USART2_FORCE_RESET()
+#define USARTx_RELEASE_RESET()           __HAL_RCC_USART2_RELEASE_RESET()
 
 #define USARTx_TX_PIN                  	 GPIO_PIN_2
 #define USARTx_TX_GPIO_PORT              GPIOA

@@ -35,6 +35,7 @@ Maintainer: Miguel Luis and Gregory Cristian
 #include <math.h>
 #include <time.h>
 #include "hw.h"
+#include "stm32f1xx_hal_rtc_ex.h"
 //#include "low_power_manager.h"
 //#include "systime.h"
 
@@ -52,41 +53,41 @@ typedef struct
 /* Private define ------------------------------------------------------------*/
 
 /* MCU Wake Up Time */
-#define MIN_ALARM_DELAY               	3 /* in ticks */
+#define MIN_ALARM_DELAY               		3 /* in ticks */
 
 /* subsecond number of bits */
-#define N_PREDIV_S                 	10
+#define N_PREDIV_S                 		10
 
 /* Synchonuous prediv  */
-#define PREDIV_S                  	((1<<N_PREDIV_S)-1)
+#define PREDIV_S                  		( ( 1 << N_PREDIV_S ) - 1 )
 
 /* Asynchonuous prediv   */
-#define PREDIV_A                  	(1<<(15-N_PREDIV_S))-1
+#define PREDIV_A                  		( 1 << (15 - N_PREDIV_S) ) - 1
 
 /* Sub-second mask definition  */
 //TODO#define HW_RTC_ALARMSUBSECONDMASK 	(N_PREDIV_S<<RTC_ALRMASSR_MASKSS_Pos)
 
 /* RTC Time base in us */
-#define USEC_NUMBER               1000000
-#define MSEC_NUMBER               (USEC_NUMBER/1000)
-#define RTC_ALARM_TIME_BASE       (USEC_NUMBER>>N_PREDIV_S)
+#define USEC_NUMBER               		1000000
+#define MSEC_NUMBER               		( USEC_NUMBER / 1000 )
+#define RTC_ALARM_TIME_BASE       		( USEC_NUMBER >> N_PREDIV_S)
 
-#define COMMON_FACTOR        3
-#define CONV_NUMER                (MSEC_NUMBER>>COMMON_FACTOR)
-#define CONV_DENOM                (1<<(N_PREDIV_S-COMMON_FACTOR))
+#define COMMON_FACTOR        	  		3
+#define CONV_NUMER                		( MSEC_NUMBER >> COMMON_FACTOR )
+#define CONV_DENOM                		( 1 << ( N_PREDIV_S - COMMON_FACTOR ) )
 
-#define DAYS_IN_LEAP_YEAR                        ( ( uint32_t )  366U )
-#define DAYS_IN_YEAR                             ( ( uint32_t )  365U )
-#define SECONDS_IN_1DAY                          ( ( uint32_t )86400U )
-#define SECONDS_IN_1HOUR                         ( ( uint32_t ) 3600U )
-#define SECONDS_IN_1MINUTE                       ( ( uint32_t )   60U )
-#define MINUTES_IN_1HOUR                         ( ( uint32_t )   60U )
-#define HOURS_IN_1DAY                            ( ( uint32_t )   24U )
+#define DAYS_IN_LEAP_YEAR                       ( ( uint32_t )  366U )
+#define DAYS_IN_YEAR                            ( ( uint32_t )  365U )
+#define SECONDS_IN_1DAY                         ( ( uint32_t )86400U )
+#define SECONDS_IN_1HOUR                        ( ( uint32_t ) 3600U )
+#define SECONDS_IN_1MINUTE                      ( ( uint32_t )   60U )
+#define MINUTES_IN_1HOUR                        ( ( uint32_t )   60U )
+#define HOURS_IN_1DAY                           ( ( uint32_t )   24U )
 
-#define  DAYS_IN_MONTH_CORRECTION_NORM     ((uint32_t) 0x99AAA0 )
-#define  DAYS_IN_MONTH_CORRECTION_LEAP     ((uint32_t) 0x445550 )
+#define DAYS_IN_MONTH_CORRECTION_NORM     	((uint32_t) 0x99AAA0 )
+#define DAYS_IN_MONTH_CORRECTION_LEAP     	((uint32_t) 0x445550 )
 
-#define DIVC( X, N )                                ( ( ( X ) + ( N ) -1 ) / ( N ) )
+#define DIVC( X, N )                            ( ( ( X ) + ( N ) -1 ) / ( N ) )
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /*!
@@ -116,7 +117,7 @@ static const uint8_t DaysInMonth[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 3
  */
 static const uint8_t DaysInMonthLeapYear[] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
-static RTC_HandleTypeDef RtcHandle={0};
+static RTC_HandleTypeDef RtcHandle = { 0 };
 
 static RTC_AlarmTypeDef RTC_AlarmStructure;
 
@@ -170,40 +171,30 @@ static void HW_RTC_SetConfig( void )
 
   RtcHandle.Instance = RTC;
 
-  //TODO  RtcHandle.Init.HourFormat = RTC_HOURFORMAT_24;
-  RtcHandle.Init.AsynchPrediv = PREDIV_A; /* RTC_ASYNCH_PREDIV; */
-  //TODO  RtcHandle.Init.SynchPrediv = PREDIV_S; /* RTC_SYNCH_PREDIV; */
-  //TODO  RtcHandle.Init.OutPut = RTC_OUTPUT;
-  //TODO  RtcHandle.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
-  //TODO  RtcHandle.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+  /* Setup prescaller and source for Tamper pin */
+  RtcHandle.Init.AsynchPrediv 	= PREDIV_A;
+  RtcHandle.Init.OutPut 	= RTC_OUTPUTSOURCE_NONE;
 
   HAL_RTC_Init( &RtcHandle );
 
   /*Monday 1st January 2016*/
-  RTC_DateStruct.Year = 0;
-  RTC_DateStruct.Month = RTC_MONTH_JANUARY;
-  RTC_DateStruct.Date = 1;
-  RTC_DateStruct.WeekDay = RTC_WEEKDAY_MONDAY;
+  RTC_DateStruct.Year 		= 0;
+  RTC_DateStruct.Month	 	= RTC_MONTH_APRIL;
+  RTC_DateStruct.Date 		= 1;
+  RTC_DateStruct.WeekDay 	= RTC_WEEKDAY_TUESDAY;
+
   HAL_RTC_SetDate(&RtcHandle , &RTC_DateStruct, RTC_FORMAT_BIN);
 
   /*at 0:0:0*/
-  RTC_TimeStruct.Hours = 0;
-  RTC_TimeStruct.Minutes = 0;
-
-  RTC_TimeStruct.Seconds = 0;
-  //TODO  RTC_TimeStruct.TimeFormat = 0;
-  //TODO  RTC_TimeStruct.SubSeconds = 0;
-  //TODO  RTC_TimeStruct.StoreOperation = RTC_DAYLIGHTSAVING_NONE;
-  //TODO  RTC_TimeStruct.DayLightSaving = RTC_STOREOPERATION_RESET;
+  RTC_TimeStruct.Hours 		= 0;
+  RTC_TimeStruct.Minutes 	= 0;
+  RTC_TimeStruct.Seconds 	= 0;
 
   HAL_RTC_SetTime(&RtcHandle , &RTC_TimeStruct, RTC_FORMAT_BIN);
-
- /*Enable Direct Read of the calendar registers (not through Shadow) */
-  HAL_RTCEx_EnableBypassShadow(&RtcHandle);
 }
 
 
-/*!
+/*! TODO
  * @brief calculates the wake up time between wake up and mcu start
  * @note resulotion in RTC_ALARM_TIME_BASE in timer ticks
  * @param none
@@ -256,26 +247,30 @@ uint32_t HW_RTC_GetMinimumTimeout( void )
  * @param [IN] time in milliseconds
  * @retval returns time in timer ticks
  */
-//uint32_t HW_RTC_ms2Tick( TimerTime_t timeMilliSec )
-//{
-///*return( ( timeMicroSec / RTC_ALARM_TIME_BASE ) ); */
-//  return ( uint32_t) ( ( ((uint64_t)timeMilliSec) * CONV_DENOM ) / CONV_NUMER );
-//}
+uint32_t HW_RTC_ms2Tick( TimerTime_t timeMilliSec )
+{
+/*return( ( timeMicroSec / RTC_ALARM_TIME_BASE ) ); */
+  return ( uint32_t) ( ( ((uint64_t)timeMilliSec) * CONV_DENOM ) / CONV_NUMER );
+}
 
 /*!
  * @brief converts time in ticks to time in ms
  * @param [IN] time in timer ticks
  * @retval returns time in milliseconds
  */
-//TimerTime_t HW_RTC_Tick2ms( uint32_t tick )
-//{
-///*return( ( timeMicroSec * RTC_ALARM_TIME_BASE ) ); */
-//  uint32_t seconds = tick>>N_PREDIV_S;
-//  tick = tick&PREDIV_S;
-//  return  ( ( seconds*1000 ) + ((tick*1000)>>N_PREDIV_S) );
-//}
+TimerTime_t HW_RTC_Tick2ms( uint32_t tick )
+{
+/*return( ( timeMicroSec * RTC_ALARM_TIME_BASE ) ); */
+  //uint32_t seconds 	= tick >> N_PREDIV_S;
+  //tick 			= tick & PREDIV_S;
+ // return  ( ( seconds*1000 ) + ((tick*1000)>>N_PREDIV_S) );
 
-/*!
+  uint32_t miliSec = tick * CONV_NUMER;
+  miliSec /= CONV_DENOM;
+  return miliSec;
+}
+
+/*! TODO
  * @brief Set the alarm
  * @note The alarm is set at now (read in this funtion) + timeout
  * @param timeout Duration of the Timer ticks
@@ -306,15 +301,15 @@ void HW_RTC_SetAlarm( uint32_t timeout )
  * @param none
  * @retval RTC Elapsed time in ticks
  */
-//uint32_t HW_RTC_GetTimerElapsedTime( void )
-//{
-//  RTC_TimeTypeDef RTC_TimeStruct;
-//  RTC_DateTypeDef RTC_DateStruct;
-//
-//  uint32_t CalendarValue = (uint32_t) HW_RTC_GetCalendarValue(&RTC_DateStruct, &RTC_TimeStruct );
-//
-//  return( ( uint32_t )( CalendarValue - RtcTimerContext.Rtc_Time ));
-//}
+uint32_t HW_RTC_GetTimerElapsedTime( void )
+{
+  RTC_TimeTypeDef RTC_TimeStruct;
+  RTC_DateTypeDef RTC_DateStruct;
+
+  uint32_t CalendarValue = (uint32_t) HW_RTC_GetCalendarValue(&RTC_DateStruct, &RTC_TimeStruct );
+
+  return( ( uint32_t )( CalendarValue - RtcTimerContext.Rtc_Time ));
+}
 
 /*!
  * @brief Get the RTC timer value
@@ -353,7 +348,7 @@ void HW_RTC_StopAlarm( void )
  */
 void HW_RTC_IrqHandler ( void )
 {
-  RTC_HandleTypeDef* hrtc=&RtcHandle;
+  RTC_HandleTypeDef* hrtc = &RtcHandle;
   /* enable low power at irq*/
   //TODO  LPM_SetStopMode(LPM_RTC_Id , LPM_Enable );
 
@@ -382,14 +377,14 @@ void HW_RTC_IrqHandler ( void )
  */
 void HW_RTC_DelayMs( uint32_t delay )
 {
-//  TimerTime_t delayValue = 0;
-//  TimerTime_t timeout = 0;
+  TimerTime_t delayValue = 0;
+  TimerTime_t timeout = 0;
 
-//  delayValue = HW_RTC_ms2Tick( delay );
+  delayValue = HW_RTC_ms2Tick( delay );
 
   /* Wait delay ms */
-//  timeout = HW_RTC_GetTimerValue( );
-//  while( ( ( HW_RTC_GetTimerValue( ) - timeout ) ) < delayValue )
+  timeout = HW_RTC_GetTimerValue( );
+  while( ( ( HW_RTC_GetTimerValue( ) - timeout ) ) < delayValue )
   {
     __NOP( );
   }
@@ -400,11 +395,11 @@ void HW_RTC_DelayMs( uint32_t delay )
  * @param none
  * @retval Timer Value
  */
-//uint32_t HW_RTC_SetTimerContext( void )
-//{
-//  RtcTimerContext.Rtc_Time = ( uint32_t ) HW_RTC_GetCalendarValue( &RtcTimerContext.RTC_Calndr_Date, &RtcTimerContext.RTC_Calndr_Time );
-//  return ( uint32_t ) RtcTimerContext.Rtc_Time;
-//}
+uint32_t HW_RTC_SetTimerContext( void )
+{
+  RtcTimerContext.Rtc_Time = ( uint32_t ) HW_RTC_GetCalendarValue( &RtcTimerContext.RTC_Calndr_Date, &RtcTimerContext.RTC_Calndr_Time );
+  return ( uint32_t ) RtcTimerContext.Rtc_Time;
+}
 
 /*!
  * @brief Get the RTC timer Reference
@@ -538,32 +533,27 @@ static void HW_RTC_StartWakeUpAlarm( uint32_t timeoutValue )
 
 
 /*!
- * @brief get current time from calendar in ticks
- * @param pointer to RTC_DateStruct
- * @param pointer to RTC_TimeStruct
+ * @brief  get current time from calendar in ticks
+ * @param  pointer to RTC_DateStruct
+ * @param  pointer to RTC_TimeStruct
  * @retval time in ticks
  */
 static uint64_t HW_RTC_GetCalendarValue( RTC_DateTypeDef* RTC_DateStruct, RTC_TimeTypeDef* RTC_TimeStruct )
 {
   uint64_t calendarValue = 0;
-  uint32_t first_read;
+//  uint32_t first_read;
   uint32_t correction;
   uint32_t seconds;
 
   /* Get Time and Date*/
   HAL_RTC_GetTime( &RtcHandle, RTC_TimeStruct, RTC_FORMAT_BIN );
+  HAL_RTC_GetDate( &RtcHandle, RTC_DateStruct, RTC_FORMAT_BIN );
 
-   /* make sure it is correct due to asynchronus nature of RTC*/
-  //TODO do {
-      //TODO    first_read = RTC_TimeStruct->SubSeconds;
-  //TODO    HAL_RTC_GetDate( &RtcHandle, RTC_DateStruct, RTC_FORMAT_BIN );
-  //TODO    HAL_RTC_GetTime( &RtcHandle, RTC_TimeStruct, RTC_FORMAT_BIN );
-    //TODO  } while (first_read != RTC_TimeStruct->SubSeconds);
 
   /* calculte amount of elapsed days since 01/01/2000 */
-  seconds= DIVC( (DAYS_IN_YEAR*3 + DAYS_IN_LEAP_YEAR)* RTC_DateStruct->Year , 4);
+  seconds = DIVC( (DAYS_IN_YEAR * 3 + DAYS_IN_LEAP_YEAR) * RTC_DateStruct->Year, 4);
 
-  correction = ( (RTC_DateStruct->Year % 4) == 0 ) ? DAYS_IN_MONTH_CORRECTION_LEAP : DAYS_IN_MONTH_CORRECTION_NORM ;
+  correction = ( (RTC_DateStruct->Year % 4) == 0 ) ? DAYS_IN_MONTH_CORRECTION_LEAP : DAYS_IN_MONTH_CORRECTION_NORM;
 
   seconds +=( DIVC( (RTC_DateStruct->Month-1)*(30+31) ,2 ) - (((correction>> ((RTC_DateStruct->Month-1)*2) )&0x3)));
 
@@ -578,7 +568,7 @@ static uint64_t HW_RTC_GetCalendarValue( RTC_DateTypeDef* RTC_DateStruct, RTC_Ti
 
 
 
-  //TODO calendarValue = (((uint64_t) seconds)<<N_PREDIV_S) + ( PREDIV_S - RTC_TimeStruct->SubSeconds);
+  calendarValue = (((uint64_t) seconds) << N_PREDIV_S) + ( PREDIV_S );
 
   return( calendarValue );
 }
@@ -608,50 +598,50 @@ uint32_t HW_RTC_GetCalendarTime( uint16_t *mSeconds)
 
 void HW_RTC_BKUPWrite( uint32_t Data0, uint32_t Data1)
 {
-  //TODO  HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR0, Data0);
-  HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR1, Data1);
+  HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR1, Data0);
+  HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR2, Data1);
 }
 
 void HW_RTC_BKUPRead( uint32_t *Data0, uint32_t *Data1)
 {
-  //TODO  *Data0=HAL_RTCEx_BKUPRead(&RtcHandle, RTC_BKP_DR0);
-  *Data1=HAL_RTCEx_BKUPRead(&RtcHandle, RTC_BKP_DR1);
+  *Data0=HAL_RTCEx_BKUPRead(&RtcHandle, RTC_BKP_DR1);
+  *Data1=HAL_RTCEx_BKUPRead(&RtcHandle, RTC_BKP_DR2);
 }
 
-//TimerTime_t RtcTempCompensation( TimerTime_t period, float temperature )
-//{
-//    float k = RTC_TEMP_COEFFICIENT;
-//    float kDev = RTC_TEMP_DEV_COEFFICIENT;
-//    float t = RTC_TEMP_TURNOVER;
-//    float tDev = RTC_TEMP_DEV_TURNOVER;
-//    float interim = 0.0;
-//    float ppm = 0.0;
-//
-//    if( k < 0.0f )
-//    {
-//        ppm = ( k - kDev );
-//    }
-//    else
-//    {
-//        ppm = ( k + kDev );
-//    }
-//    interim = ( temperature - ( t - tDev ) );
-//    ppm *=  interim * interim;
-//
-//    // Calculate the drift in time
-//    interim = ( ( float ) period * ppm ) / 1000000;
-//    // Calculate the resulting time period
-//    interim += period;
-//    interim = floor( interim );
-//
-//    if( interim < 0.0f )
-//    {
-//        interim = ( float )period;
-//    }
-//
-//    // Calculate the resulting period
-//    return ( TimerTime_t ) interim;
-//}
+TimerTime_t RtcTempCompensation( TimerTime_t period, float temperature )
+{
+    float k = RTC_TEMP_COEFFICIENT;
+    float kDev = RTC_TEMP_DEV_COEFFICIENT;
+    float t = RTC_TEMP_TURNOVER;
+    float tDev = RTC_TEMP_DEV_TURNOVER;
+    float interim = 0.0;
+    float ppm = 0.0;
+
+    if( k < 0.0f )
+    {
+        ppm = ( k - kDev );
+    }
+    else
+    {
+        ppm = ( k + kDev );
+    }
+    interim = ( temperature - ( t - tDev ) );
+    ppm *=  interim * interim;
+
+    // Calculate the drift in time
+    interim = ( ( float ) period * ppm ) / 1000000;
+    // Calculate the resulting time period
+    interim += period;
+    interim = floor( interim );
+
+    if( interim < 0.0f )
+    {
+        interim = ( float )period;
+    }
+
+    // Calculate the resulting period
+    return ( TimerTime_t ) interim;
+}
 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -43,9 +43,9 @@ void DBG_Init(void)
   GPIO_InitStructure.Mode   = GPIO_MODE_ANALOG;
   GPIO_InitStructure.Pull   = GPIO_NOPULL;
   GPIO_InitStructure.Pin    = (GPIO_PIN_13 | GPIO_PIN_14);
-  __GPIOA_CLK_ENABLE() ;
+  __HAL_RCC_GPIOA_CLK_ENABLE();
   HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
-  __GPIOA_CLK_DISABLE() ;
+  __HAL_RCC_GPIOA_CLK_DISABLE();
 
   __HAL_RCC_DBGMCU_CLK_ENABLE( );
   HAL_DBGMCU_DisableDBGSleepMode( );
@@ -57,8 +57,7 @@ void DBG_Init(void)
 
 void Error_Handler(void)
 {
-  // TODO: Uncomment this line
-  //PRINTF("Error_Handler\n\r");
+  PRINTF("Error_Handler\n\r");
   while (1)
   {
     ;

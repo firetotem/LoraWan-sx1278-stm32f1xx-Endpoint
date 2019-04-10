@@ -3,6 +3,9 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
+#define SPI_CS_LOW()	HW_GPIO_Write( RADIO_NSS_PORT, RADIO_NSS_PIN, 0 )
+#define SPI_CS_HIGH()	HW_GPIO_Write( RADIO_NSS_PORT, RADIO_NSS_PIN, 1 )
+
 /* Private variables ---------------------------------------------------------*/
 static SPI_HandleTypeDef hspi;
 
@@ -28,9 +31,9 @@ void HW_SPI_Init( void )
   /*##-1- Configure the SPI peripheral */
   /* Set the SPI parameters */
 
-  hspi.Instance = SPI1;
+  hspi.Instance = SPIx;
 
-  hspi.Init.BaudRatePrescaler 		= SpiFrequency( 10000000 );
+  hspi.Init.BaudRatePrescaler 		= SPI_BAUDRATEPRESCALER_32;
   hspi.Init.Direction      		= SPI_DIRECTION_2LINES;
   hspi.Init.Mode           		= SPI_MODE_MASTER;
   hspi.Init.CLKPolarity    		= SPI_POLARITY_LOW;
@@ -41,7 +44,6 @@ void HW_SPI_Init( void )
   hspi.Init.NSS            		= SPI_NSS_SOFT;
   hspi.Init.TIMode         		= SPI_TIMODE_DISABLE;
 
-
   SPI_CLK_ENABLE();
 
   if(HAL_SPI_Init( &hspi) != HAL_OK)
@@ -49,9 +51,6 @@ void HW_SPI_Init( void )
     /* Initialization Error */
      Error_Handler();
   }
-
-  /*##-2- Configure the SPI GPIOs */
-  HW_SPI_IoInit(  );
 }
 
 /*!
@@ -67,51 +66,43 @@ void HW_SPI_DeInit( void )
   /*##-1- Reset peripherals ####*/
   __HAL_RCC_SPI1_FORCE_RESET();
   __HAL_RCC_SPI1_RELEASE_RESET();
-  /*##-2- Configure the SPI GPIOs */
-  HW_SPI_IoDeInit( );
 }
 
-void HW_SPI_IoInit( void )
+/**
+  * @brief  Initialize the SPI MSP.
+  * @param  hspi: pointer to a SPI_HandleTypeDef structure that contains
+  *               the configuration information for SPI module.
+  * @retval None
+  */
+void HAL_SPI_MspInit(SPI_HandleTypeDef *hspi)
 {
-  GPIO_InitTypeDef initStruct={0};
+  GPIO_InitTypeDef initStruct = { 0 };
 
-  initStruct.Mode = GPIO_MODE_AF_PP;
-  initStruct.Pull = GPIO_PULLDOWN;
-  initStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  if ( hspi->Instance == SPIx )
+  {
+      initStruct.Mode 	= GPIO_MODE_AF_PP;
+      initStruct.Pull 	= GPIO_NOPULL;
+      initStruct.Speed 	= GPIO_SPEED_FREQ_HIGH;
+      HW_GPIO_Init( RADIO_SCLK_PORT, RADIO_SCLK_PIN, &initStruct);
+      HW_GPIO_Init( RADIO_MISO_PORT, RADIO_MISO_PIN, &initStruct);
+      HW_GPIO_Init( RADIO_MOSI_PORT, RADIO_MOSI_PIN, &initStruct);
 
-  HW_GPIO_Init( RADIO_SCLK_PORT, RADIO_SCLK_PIN, &initStruct);
-  HW_GPIO_Init( RADIO_MISO_PORT, RADIO_MISO_PIN, &initStruct);
-  HW_GPIO_Init( RADIO_MOSI_PORT, RADIO_MOSI_PIN, &initStruct);
-
-  initStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  initStruct.Pull = GPIO_NOPULL;
-
-  HW_GPIO_Init(  RADIO_NSS_PORT, RADIO_NSS_PIN, &initStruct );
-
-  HW_GPIO_Write ( RADIO_NSS_PORT, RADIO_NSS_PIN, 1 );
+      initStruct.Mode = GPIO_MODE_OUTPUT_PP;
+      initStruct.Pull = GPIO_NOPULL;
+      HW_GPIO_Init( RADIO_NSS_PORT, RADIO_NSS_PIN, &initStruct );
+      HW_GPIO_Write( RADIO_NSS_PORT, RADIO_NSS_PIN, 1 );
+  }
 }
 
-void HW_SPI_IoDeInit( void )
+void HAL_SPI_MspDeInit( SPI_HandleTypeDef *hspi )
 {
-  GPIO_InitTypeDef initStruct={0};
-
-  initStruct.Mode = GPIO_MODE_OUTPUT_PP;
-
-  initStruct.Pull = GPIO_NOPULL  ;
-  HW_GPIO_Init ( RADIO_MOSI_PORT, RADIO_MOSI_PIN, &initStruct );
-  HW_GPIO_Write( RADIO_MOSI_PORT, RADIO_MOSI_PIN, 0 );
-
-  initStruct.Pull = GPIO_PULLDOWN;
-  HW_GPIO_Init ( RADIO_MISO_PORT, RADIO_MISO_PIN, &initStruct );
-  HW_GPIO_Write( RADIO_MISO_PORT, RADIO_MISO_PIN, 0 );
-
-  initStruct.Pull = GPIO_NOPULL  ;
-  HW_GPIO_Init ( RADIO_SCLK_PORT, RADIO_SCLK_PIN, &initStruct );
-  HW_GPIO_Write(  RADIO_SCLK_PORT, RADIO_SCLK_PIN, 0 );
-
-  initStruct.Pull = GPIO_NOPULL  ;
-  HW_GPIO_Init ( RADIO_NSS_PORT, RADIO_NSS_PIN , &initStruct );
-  HW_GPIO_Write( RADIO_NSS_PORT, RADIO_NSS_PIN , 1 );
+  if ( hspi->Instance == SPIx )
+  {
+      HAL_GPIO_DeInit( RADIO_MOSI_PORT, RADIO_MOSI_PIN );
+      HAL_GPIO_DeInit( RADIO_MOSI_PORT, RADIO_MISO_PIN );
+      HAL_GPIO_DeInit( RADIO_MOSI_PORT, RADIO_SCLK_PIN );
+      HAL_GPIO_DeInit( RADIO_MOSI_PORT, RADIO_NSS_PIN );
+  }
 }
 
 /*!
@@ -124,7 +115,13 @@ uint16_t HW_SPI_InOut( uint16_t txData )
 {
   uint16_t rxData ;
 
+  SPI_CS_LOW();
+  BSP_Led_On();
+
   HAL_SPI_TransmitReceive( &hspi, ( uint8_t * ) &txData, ( uint8_t* ) &rxData, 1, HAL_MAX_DELAY);
+
+  BSP_Led_Off();
+  SPI_CS_HIGH();
 
   return rxData;
 }

@@ -34,7 +34,6 @@
 #endif 
 
 #include "stm32f1xx_hal.h"
-#include "stm32f1xx_hw_conf.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/

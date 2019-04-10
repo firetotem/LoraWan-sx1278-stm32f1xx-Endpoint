@@ -2,80 +2,44 @@
 #include "hw.h"
 #include "utilities.h"
 
-/* Private function prototypes -----------------------------------------------*/
-void SystemClock_Config(void);
-
-uint8_t txBuff[255] = "Hello usart terminal!\n";
-
-
 int main(void) {
 
 	HAL_Init();
 	SystemClock_Config();
 	HW_Init();
 
-	LOG("Hello idx = %d\n\r", 10);
+	uint8_t ID[8] = {0};
+	HW_GetUniqueId(ID);
 
-	uint8_t idx = 0;
-	LOG("Hello idx = %d\n\r", idx++);
+	LOG( "Console is enabled\n\r");
+	LOG( "ChipId    : 0x%x%x%x%x%x%x%x%x\n\r", ID[0], ID[1], ID[2], ID[3], ID[4], ID[5], ID[6], ID[7] );
+	LOG( "CPU SysClk: %d Hz\n\r", HAL_RCC_GetSysClockFreq());
+
+	LOG( "CPU Temp: %d.%d C\n\r",    HW_GetTemperatureLevel()/10, HW_GetTemperatureLevel()%10 );
+	LOG( "CPU Voltage: %d.%d V\n\r", HW_GetBatteryLevel()/1000,   HW_GetBatteryLevel()%1000   );
+
+
+	BSP_Radio_Reset_Off();
+
+	HW_SPI_InOut(0x42);
+	LOG( "Ra-2 Version: 0x%x \n\r", HW_SPI_InOut(0x00) );
+
+	HW_SPI_InOut(0x44);
+	LOG( "Ra-2 RegPllHop: 0x%x \n\r", HW_SPI_InOut(0x00) );
+
+	BSP_Led_On();
+	BSP_Led_Off();
+
+
+
+
 
 	while (1) {
-
-	    LOG("Hello idx = %d\n\r", idx++);
 	    HAL_Delay(1000);
+	    BSP_Led_Toggle();
+	    LOG( "CPU Temp: %d.%d C\n\r", HW_GetTemperatureLevel()/10, HW_GetTemperatureLevel()%10);
 	}
 
 }
 
-/**
- * @brief  System Clock Configuration
- *         The system Clock is configured as follow :
- *            System Clock source            = PLL (HSI)
- *            SYSCLK(Hz)                     = 64000000
- *            HCLK(Hz)                       = 64000000
- *            AHB Prescaler                  = 1
- *            APB1 Prescaler                 = 2
- *            APB2 Prescaler                 = 1
- *            PLLMUL                         = 16
- *            Flash Latency(WS)              = 2
- * @param  None
- * @retval None
- */
-void SystemClock_Config(void) {
-	RCC_ClkInitTypeDef clkinitstruct = { 0 };
-	RCC_OscInitTypeDef oscinitstruct = { 0 };
 
-	/* Configure PLL ------------------------------------------------------*/
-	/* PLL configuration: PLLCLK = (HSI / 2) * PLLMUL = (8 / 2) * 16 = 64 MHz */
-	/* PREDIV1 configuration: PREDIV1CLK = PLLCLK / HSEPredivValue = 64 / 1 = 64 MHz */
-	/* Enable HSI and activate PLL with HSi_DIV2 as source */
-	oscinitstruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-	oscinitstruct.HSEState = RCC_HSE_OFF;
-	oscinitstruct.LSEState = RCC_LSE_OFF;
-	oscinitstruct.HSIState = RCC_HSI_ON;
-	oscinitstruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-	oscinitstruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
-	oscinitstruct.PLL.PLLState = RCC_PLL_ON;
-	oscinitstruct.PLL.PLLSource = RCC_PLLSOURCE_HSI_DIV2;
-	oscinitstruct.PLL.PLLMUL = RCC_PLL_MUL16;
-	if (HAL_RCC_OscConfig(&oscinitstruct) != HAL_OK) {
-		/* Initialization Error */
-		while (1)
-			;
-	}
-
-	/* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
-	 clocks dividers */
-	clkinitstruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK
-			| RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
-	clkinitstruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-	clkinitstruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-	clkinitstruct.APB2CLKDivider = RCC_HCLK_DIV1;
-	clkinitstruct.APB1CLKDivider = RCC_HCLK_DIV2;
-	if (HAL_RCC_ClockConfig(&clkinitstruct, FLASH_LATENCY_2) != HAL_OK) {
-		/* Initialization Error */
-		while (1)
-			;
-	}
-
-}

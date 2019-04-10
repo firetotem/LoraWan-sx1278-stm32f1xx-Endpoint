@@ -36,8 +36,6 @@
 #define TVL2(X)    do{ if(VERBOSE_LEVEL>=VERBOSE_LEVEL_2) { X } } while(0);
 
 
-
-
 typedef uint32_t TimerTime_t;
 
 

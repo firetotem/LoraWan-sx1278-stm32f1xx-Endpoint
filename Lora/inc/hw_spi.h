@@ -25,19 +25,6 @@ void HW_SPI_Init( void );
  */
 void HW_SPI_DeInit( void );
 
-/*!
- * @brief Initializes the SPI IOs
- *
- * @param [IN] none
- */
-void HW_SPI_IoInit( void );
-
-/*!
- * @brief De-initializes the SPI IOs
- *
- * @param [IN] none
- */
-void HW_SPI_IoDeInit( void );
 
 /*!
  * @brief Sends outData and receives inData

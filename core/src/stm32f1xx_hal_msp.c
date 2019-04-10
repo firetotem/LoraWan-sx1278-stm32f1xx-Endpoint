@@ -20,21 +20,21 @@
   * @retval HAL status
   */
 
-HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
-{
-   /* Return function status */
-  return HAL_OK;
-}
+//HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
+//{
+//   /* Return function status */
+  //return HAL_OK;
+//}
 
 /**
   * @brief This function provides delay (in ms)
   * @param Delay: specifies the delay time length, in milliseconds.
   * @retval None
   */
-void HAL_Delay(__IO uint32_t Delay)
-{
-  HW_RTC_DelayMs( Delay ); /* based on RTC */
-}
+//void HAL_Delay(__IO uint32_t Delay)
+//{
+//  HW_RTC_DelayMs( Delay ); /* based on RTC */
+//}
 
 /**
   * @brief  Initializes the MSP.
@@ -42,7 +42,7 @@ void HAL_Delay(__IO uint32_t Delay)
   */
 void HAL_MspInit(void)
 {
-    __HAL_RCC_PWR_CLK_ENABLE();
+  __HAL_RCC_PWR_CLK_ENABLE();
 
   /* Disable the Power Voltage Detector */
   HAL_PWR_DisablePVD( );
@@ -59,7 +59,7 @@ void HAL_MspInit(void)
   /* Configure all IOs in analog input              */
   /* Except PA143 and PA14 (SWCLK and SWD) for debug*/
   /* PA13 and PA14 are configured in debug_init     */
-  //HW_GpioInit( ); TODO HW_GPIOInit
+  HW_GpioInit( );
 }
 
 /**

@@ -29,7 +29,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_it.h"
+#include "stm32f1xx_hw_conf.h"
 #include "vcom.h"
+#include "hw_rtc.h"
 
 /** @addtogroup IO_Toggle
   * @{
@@ -161,14 +163,6 @@ void SysTick_Handler(void)
 {
 }*/
 
-void WWDG_IRQHandler( void )
-{
-  __IO uint8_t i = 100;
-  UNUSED(i);
-}
-
-
-
 void USARTx_IRQHandler( void )
 {
   vcom_IRQHandler();
@@ -182,8 +176,7 @@ void USARTx_DMA_TX_IRQHandler( void )
 
 void RTC_Alarm_IRQHandler( void )
 {
-	//TODO RTC_IrqHandler
-	//HW_RTC_IrqHandler ( );
+  HW_RTC_IrqHandler ( );
 }
 
 void EXTI0_IRQHandler( void )

@@ -11,6 +11,9 @@ static UART_HandleTypeDef UartHandle;
 
 static void ( *TxCpltCallback ) (void);
 
+/**
+ * Функция инициализации УАРТ
+ */
 void vcom_Init( void (*TxCb)(void) )
 {
 
@@ -40,6 +43,7 @@ void vcom_Init( void (*TxCb)(void) )
   }
 }
 
+
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
   /* buffer transmission complete*/
@@ -47,20 +51,23 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 }
 
 
-void vcom_Trace(  uint8_t *p_data, uint16_t size )
+void vcom_Trace( uint8_t *p_data, uint16_t size )
 {
   HAL_UART_Transmit_DMA(&UartHandle,p_data, size);
 }
+
 
 void vcom_DMA_TX_IRQHandler(void)
 {
   HAL_DMA_IRQHandler(UartHandle.hdmatx);
 }
 
+
 void vcom_IRQHandler(void)
 {
   HAL_UART_IRQHandler(&UartHandle);
 }
+
 
 void vcom_DeInit(void)
 {
@@ -90,6 +97,7 @@ void vcom_IoInit( void )
   HAL_GPIO_Init(USARTx_RX_GPIO_PORT, &GPIO_InitStruct);
 }
 
+
 void vcom_IoDeInit(void)
 {
   GPIO_InitTypeDef GPIO_InitStructure={0};
@@ -106,8 +114,9 @@ void vcom_IoDeInit(void)
   HAL_GPIO_Init( USARTx_RX_GPIO_PORT, &GPIO_InitStructure );
 }
 
-
-
+/**
+ * Вызывается в HAL
+ */
 void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 {
   static DMA_HandleTypeDef hdma_tx;
