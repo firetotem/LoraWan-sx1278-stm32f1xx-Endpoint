@@ -149,7 +149,7 @@ typedef struct __SPI_HandleTypeDef
 
   __IO uint32_t              ErrorCode;    /*!< SPI Error code */
 
-}SPI_HandleTypeDef;
+} SPI_HandleTypeDef;
 
 /**
   * @}

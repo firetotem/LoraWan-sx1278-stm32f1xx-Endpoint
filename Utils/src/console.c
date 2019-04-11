@@ -1,7 +1,7 @@
 #include "queue.h"
 #include "console.h"
 #include "utilities.h"
-#include "../../HW_BSP/inc/hw.h"
+#include "hw.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private defines -----------------------------------------------------------*/

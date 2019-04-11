@@ -1,4 +1,4 @@
-#include "../../HW_BSP/inc/hw.h"
+#include "hw.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -107,13 +107,13 @@ uint16_t HW_SPI_InOut( uint16_t txData )
 {
   uint16_t rxData ;
 
-  SPI_CS_LOW();
-  BSP_Led_On();
+  //SPI_CS_LOW();
+  //BSP_Led_On();
 
   HAL_SPI_TransmitReceive( &hspi, ( uint8_t * ) &txData, ( uint8_t* ) &rxData, 1, HAL_MAX_DELAY);
 
-  BSP_Led_Off();
-  SPI_CS_HIGH();
+  //BSP_Led_Off();
+  //SPI_CS_HIGH();
 
   return rxData;
 }

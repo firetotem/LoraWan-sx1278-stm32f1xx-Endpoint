@@ -1,5 +1,5 @@
-#include "../../HW_BSP/inc/hw.h"
-#include "../../HW_BSP/inc/hw_msp.h"
+#include "hw.h"
+#include "hw_msp.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/

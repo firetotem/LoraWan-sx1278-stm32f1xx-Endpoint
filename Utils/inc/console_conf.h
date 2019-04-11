@@ -1,7 +1,7 @@
 #ifndef INC_CONSOLE_CONF_H_
 #define INC_CONSOLE_CONF_H_
 
-#include "../../HW_BSP/inc/vcom.h"
+#include "vcom.h"
 
 #define OutputInit	vcom_Init
 #define OutputTrace	vcom_Trace

@@ -6,33 +6,27 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include <stdbool.h>
 #include "utilities.h"
-
 /* Exported types ------------------------------------------------------------*/
+typedef struct
+{
+
+  uint32_t Alarm;	// Number of Tick from TimeOfSet;
+
+  uint32_t TimeOfSet;	// Time of setting of alarm;
+
+  bool	AlarmIsActive;	// Flag of activity of alarm;
+
+} RtcSoftAlarm_t;
+
+extern RtcSoftAlarm_t RtcAlarmContext;
+
 /* Exported constants --------------------------------------------------------*/
 /* External variables --------------------------------------------------------*/
 /* Exported macros -----------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
-/*!
- * \brief Temperature coefficient of the clock source
- */
-#define RTC_TEMP_COEFFICIENT                            ( -0.035 )
-
-/*!
- * \brief Temperature coefficient deviation of the clock source
- */
-#define RTC_TEMP_DEV_COEFFICIENT                        ( 0.0035 )
-
-/*!
- * \brief Turnover temperature of the clock source
- */
-#define RTC_TEMP_TURNOVER                               ( 25.0 )
-
-/*!
- * \brief Turnover temperature deviation of the clock source
- */
-#define RTC_TEMP_DEV_TURNOVER                           ( 5.0 )
 /*!
  * @brief Initializes the RTC timer
  * @note The timer is based on the RTC
@@ -128,17 +122,6 @@ uint32_t HW_RTC_ms2Tick( TimerTime_t timeMilliSec );
  * @retval returns time in timer milliseconds
  */
 TimerTime_t HW_RTC_Tick2ms( uint32_t tick );
-
-/*!
- * \brief Computes the temperature compensation for a period of time on a
- *        specific temperature.
- *
- * \param [IN] period Time period to compensate
- * \param [IN] temperature Current temperature
- *
- * \retval Compensated time period
- */
-TimerTime_t RtcTempCompensation( TimerTime_t period, float temperature );
 
 /*!
  * \brief Get system time

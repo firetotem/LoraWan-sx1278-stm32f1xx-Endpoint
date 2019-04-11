@@ -1,4 +1,4 @@
-#include "../../HW_BSP/inc/bsp.h"
+#include "bsp.h"
 
 void BSP_Led_Init( void )
 {

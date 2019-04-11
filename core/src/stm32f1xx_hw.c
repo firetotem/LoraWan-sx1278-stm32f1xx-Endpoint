@@ -1,6 +1,6 @@
 #include "utilities.h"
-#include "../../HW_BSP/inc/hw.h"
-#include "../../HW_BSP/inc/vcom.h"
+#include "hw.h"
+#include "vcom.h"
 
 /*!
  *  \brief Unique Devices IDs register set ( STM32F1xxx )

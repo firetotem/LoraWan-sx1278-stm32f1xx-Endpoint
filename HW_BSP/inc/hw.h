@@ -9,14 +9,15 @@ extern "C" {
 #include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include "../../HW_BSP/inc/hw_conf.h"
-#include "../../HW_BSP/inc/hw_gpio.h"
-#include "../../HW_BSP/inc/hw_spi.h"
-#include "../../HW_BSP/inc/hw_rtc.h"
-#include "../../HW_BSP/inc/hw_msp.h"
-#include "../../HW_BSP/inc/hw_adc.h"
-#include "../../HW_BSP/inc/bsp.h"
-#include "../../HW_BSP/inc/debug.h"
+#include "hw_conf.h"
+#include "hw_gpio.h"
+#include "hw_spi.h"
+#include "hw_rtc.h"
+#include "hw_msp.h"
+#include "hw_adc.h"
+#include "sx1276.h"
+#include "bsp.h"
+#include "debug.h"
 
 #ifdef __cplusplus
 }

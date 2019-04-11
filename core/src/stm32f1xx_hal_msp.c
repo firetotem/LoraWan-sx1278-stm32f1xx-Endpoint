@@ -1,4 +1,4 @@
-#include "../../HW_BSP/inc/hw.h"
+#include "hw.h"
 
 /* when fast wake up is enabled, the mcu wakes up in ~20us  * and
  * does not wait for the VREFINT to be settled. THis is ok for
@@ -20,21 +20,21 @@
   * @retval HAL status
   */
 
-HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
-{
-   /* Return function status */
-  return HAL_OK;
-}
+//HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
+//{
+//   /* Return function status */
+//  return HAL_OK;
+//}
 
 /**
   * @brief This function provides delay (in ms)
   * @param Delay: specifies the delay time length, in milliseconds.
   * @retval None
   */
-void HAL_Delay(__IO uint32_t Delay)
-{
-  HW_RTC_DelayMs( Delay ); /* based on RTC */
-}
+//void HAL_Delay(__IO uint32_t Delay)
+//{
+//  HW_RTC_DelayMs( Delay ); /* based on RTC */
+//}
 
 /**
   * @brief  Initializes the MSP.

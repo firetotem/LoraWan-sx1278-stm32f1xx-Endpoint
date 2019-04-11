@@ -2,20 +2,21 @@
 #define INC_UTILITIES_H_
 
 #include "console.h"
-#include "../../HW_BSP/inc/hw_conf.h"
+#include "hw_conf.h"
 
 /* BACKUP_PRIMASK MUST be implemented at the begining of the funtion
    that implement a critical section
    PRIMASK is saved on STACK and recovered at the end of the funtion
    That way RESTORE_PRIMASK ensures critical sections are maintained even in nested calls...*/
-#define BACKUP_PRIMASK()  uint32_t primask_bit= __get_PRIMASK()
-#define DISABLE_IRQ() __disable_irq()
-#define ENABLE_IRQ() __enable_irq()
-#define RESTORE_PRIMASK() __set_PRIMASK(primask_bit)
+#define BACKUP_PRIMASK()  	uint32_t primask_bit=__get_PRIMASK()
+#define DISABLE_IRQ() 		__disable_irq()
+#define ENABLE_IRQ() 		__enable_irq()
+#define RESTORE_PRIMASK() 	__set_PRIMASK(primask_bit)
 
 
-#define CRITICAL_SECTION_BEGIN( )     	uint32_t primask_bit= __get_PRIMASK();\
+#define CRITICAL_SECTION_BEGIN( )     	uint32_t primask_bit=__get_PRIMASK();\
 					__disable_irq()
+
 #define CRITICAL_SECTION_END( )   	__set_PRIMASK(primask_bit)
 
 #define LOG(...)     do{ TraceSend(__VA_ARGS__); } while(0);

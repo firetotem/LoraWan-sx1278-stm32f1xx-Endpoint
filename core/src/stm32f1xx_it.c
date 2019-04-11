@@ -29,10 +29,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_it.h"
-#include "stm32f1xx_hw_conf.h"
 
-#include "../../HW_BSP/inc/hw_rtc.h"
-#include "../../HW_BSP/inc/vcom.h"
+#include "hw.h"
+#include "vcom.h"
 
 /** @addtogroup IO_Toggle
   * @{
@@ -146,6 +145,7 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
     HAL_IncTick();
+    HW_RTC_IrqHandler ( );
 }
 
 /******************************************************************************/
@@ -177,7 +177,7 @@ void USARTx_DMA_TX_IRQHandler( void )
 
 void RTC_Alarm_IRQHandler( void )
 {
-  HW_RTC_IrqHandler ( );
+
 }
 
 void EXTI0_IRQHandler( void )

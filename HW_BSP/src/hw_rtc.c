@@ -34,11 +34,12 @@ Maintainer: Miguel Luis and Gregory Cristian
 /* Includes ------------------------------------------------------------------*/
 #include <math.h>
 #include <time.h>
-#include "stm32f1xx_hal_rtc_ex.h"
 
-#include "../../HW_BSP/inc/hw.h"
+#include "hw.h"
 //#include "low_power_manager.h"
 //#include "systime.h"
+
+
 
 /* Private typedef -----------------------------------------------------------*/
 typedef struct
@@ -100,7 +101,7 @@ static bool HW_RTC_Initalized = false;
  * \brief compensates MCU wakeup time
  */
 
-static bool McuWakeUpTimeInitialized = false;
+//static bool McuWakeUpTimeInitialized = false;
 
 /*!
  * \brief compensates MCU wakeup time
@@ -129,6 +130,7 @@ static RTC_AlarmTypeDef RTC_AlarmStructure;
  */
 static RtcTimerContext_t RtcTimerContext;
 
+RtcSoftAlarm_t RtcAlarmContext = { 0 };
 /* Private function prototypes -----------------------------------------------*/
 
 static void HW_RTC_SetConfig( void );
@@ -250,7 +252,6 @@ uint32_t HW_RTC_GetMinimumTimeout( void )
  */
 uint32_t HW_RTC_ms2Tick( TimerTime_t timeMilliSec )
 {
-/*return( ( timeMicroSec / RTC_ALARM_TIME_BASE ) ); */
   return ( uint32_t) ( ( ((uint64_t)timeMilliSec) * CONV_DENOM ) / CONV_NUMER );
 }
 
@@ -278,23 +279,27 @@ TimerTime_t HW_RTC_Tick2ms( uint32_t tick )
  */
 void HW_RTC_SetAlarm( uint32_t timeout )
 {
-  /* we don't go in Low Power mode for timeout below MIN_ALARM_DELAY */
-  if ( (MIN_ALARM_DELAY + McuWakeUpTimeCal ) < ((timeout - HW_RTC_GetTimerElapsedTime( ) )) )
-  {
-      //TODO    LPM_SetStopMode(LPM_RTC_Id , LPM_Enable );
-  }
-  else
-  {
-      //TODO    LPM_SetStopMode(LPM_RTC_Id , LPM_Disable );
-  }
+//  /* we don't go in Low Power mode for timeout below MIN_ALARM_DELAY */
+//  if ( (MIN_ALARM_DELAY + McuWakeUpTimeCal ) < ((timeout - HW_RTC_GetTimerElapsedTime( ) )) )
+//  {
+//      //TODO    LPM_SetStopMode(LPM_RTC_Id , LPM_Enable );
+//  }
+//  else
+//  {
+//      //TODO    LPM_SetStopMode(LPM_RTC_Id , LPM_Disable );
+//  }
+//
+//  /*In case stop mode is required */
+//  //TODO  if( LPM_GetMode() == LPM_StopMode )
+//  {
+//    //TODO    timeout = timeout -  McuWakeUpTimeCal;
+//  }
+//
+//  HW_RTC_StartWakeUpAlarm( timeout );
 
-  /*In case stop mode is required */
-  //TODO  if( LPM_GetMode() == LPM_StopMode )
-  {
-    //TODO    timeout = timeout -  McuWakeUpTimeCal;
-  }
-
-  HW_RTC_StartWakeUpAlarm( timeout );
+  RtcAlarmContext.TimeOfSet 	= HAL_GetTick();
+  RtcAlarmContext.Alarm		= timeout;
+  RtcAlarmContext.AlarmIsActive = true;
 }
 
 /*!
@@ -304,12 +309,15 @@ void HW_RTC_SetAlarm( uint32_t timeout )
  */
 uint32_t HW_RTC_GetTimerElapsedTime( void )
 {
-  RTC_TimeTypeDef RTC_TimeStruct;
-  RTC_DateTypeDef RTC_DateStruct;
+//  RTC_TimeTypeDef RTC_TimeStruct;
+//  RTC_DateTypeDef RTC_DateStruct;
+//
+//  uint32_t CalendarValue = (uint32_t) HW_RTC_GetCalendarValue(&RTC_DateStruct, &RTC_TimeStruct );
+//
+//  return( ( uint32_t )( CalendarValue - RtcTimerContext.Rtc_Time ));
 
-  uint32_t CalendarValue = (uint32_t) HW_RTC_GetCalendarValue(&RTC_DateStruct, &RTC_TimeStruct );
+    return (HAL_GetTick() - RtcTimerContext.Rtc_Time);
 
-  return( ( uint32_t )( CalendarValue - RtcTimerContext.Rtc_Time ));
 }
 
 /*!
@@ -334,12 +342,16 @@ uint32_t HW_RTC_GetTimerValue( void )
  */
 void HW_RTC_StopAlarm( void )
 {
-  /* Disable the Alarm A interrupt */
-  HAL_RTC_DeactivateAlarm(&RtcHandle, RTC_ALARM_A );
-  /* Clear RTC Alarm Flag */
-  __HAL_RTC_ALARM_CLEAR_FLAG( &RtcHandle, RTC_FLAG_ALRAF);
-  /* Clear the EXTI's line Flag for RTC Alarm */
-  __HAL_RTC_ALARM_EXTI_CLEAR_FLAG();
+//  /* Disable the Alarm A interrupt */
+//  HAL_RTC_DeactivateAlarm(&RtcHandle, RTC_ALARM_A );
+//  /* Clear RTC Alarm Flag */
+//  __HAL_RTC_ALARM_CLEAR_FLAG( &RtcHandle, RTC_FLAG_ALRAF);
+//  /* Clear the EXTI's line Flag for RTC Alarm */
+//  __HAL_RTC_ALARM_EXTI_CLEAR_FLAG();
+
+  RtcAlarmContext.Alarm = 0;
+  RtcAlarmContext.TimeOfSet = 0;
+  RtcAlarmContext.AlarmIsActive = false;
 }
 
 /*!
@@ -349,25 +361,34 @@ void HW_RTC_StopAlarm( void )
  */
 void HW_RTC_IrqHandler ( void )
 {
-  RTC_HandleTypeDef* hrtc = &RtcHandle;
+  //RTC_HandleTypeDef* hrtc = &RtcHandle;
   /* enable low power at irq*/
   //TODO  LPM_SetStopMode(LPM_RTC_Id , LPM_Enable );
 
   /* Clear the EXTI's line Flag for RTC Alarm */
-  __HAL_RTC_ALARM_EXTI_CLEAR_FLAG();
+  //__HAL_RTC_ALARM_EXTI_CLEAR_FLAG();
 
     /* Get the AlarmA interrupt source enable status */
-  if(__HAL_RTC_ALARM_GET_IT_SOURCE(hrtc, RTC_IT_ALRA) != RESET)
-  {
+  //if(__HAL_RTC_ALARM_GET_IT_SOURCE(hrtc, RTC_IT_ALRA) != RESET)
+  //{
     /* Get the pending status of the AlarmA Interrupt */
-    if(__HAL_RTC_ALARM_GET_FLAG(hrtc, RTC_FLAG_ALRAF) != RESET)
-    {
+  //  if(__HAL_RTC_ALARM_GET_FLAG(hrtc, RTC_FLAG_ALRAF) != RESET)
+  // {
       /* Clear the AlarmA interrupt pending bit */
-      __HAL_RTC_ALARM_CLEAR_FLAG(hrtc, RTC_FLAG_ALRAF);
+  //    __HAL_RTC_ALARM_CLEAR_FLAG(hrtc, RTC_FLAG_ALRAF);
       /* AlarmA callback */
-      HAL_RTC_AlarmAEventCallback(hrtc);
-    }
+  //    HAL_RTC_AlarmAEventCallback(hrtc);
+  //  }
+  //}
+
+  if ( RtcAlarmContext.AlarmIsActive == true )
+  {
+      if ( ( HAL_GetTick() - RtcAlarmContext.TimeOfSet ) > RtcAlarmContext.Alarm )
+	{
+	    HAL_RTC_AlarmAEventCallback(NULL);
+	}
   }
+
 }
 
 
@@ -398,7 +419,8 @@ void HW_RTC_DelayMs( uint32_t delay )
  */
 uint32_t HW_RTC_SetTimerContext( void )
 {
-  RtcTimerContext.Rtc_Time = ( uint32_t ) HW_RTC_GetCalendarValue( &RtcTimerContext.RTC_Calndr_Date, &RtcTimerContext.RTC_Calndr_Time );
+  //RtcTimerContext.Rtc_Time = ( uint32_t ) HW_RTC_GetCalendarValue( &RtcTimerContext.RTC_Calndr_Date, &RtcTimerContext.RTC_Calndr_Time );
+  RtcTimerContext.Rtc_Time = HAL_GetTick();
   return ( uint32_t ) RtcTimerContext.Rtc_Time;
 }
 
@@ -608,42 +630,6 @@ void HW_RTC_BKUPRead( uint32_t *Data0, uint32_t *Data1)
   *Data0=HAL_RTCEx_BKUPRead(&RtcHandle, RTC_BKP_DR1);
   *Data1=HAL_RTCEx_BKUPRead(&RtcHandle, RTC_BKP_DR2);
 }
-
-TimerTime_t RtcTempCompensation( TimerTime_t period, float temperature )
-{
-    float k = RTC_TEMP_COEFFICIENT;
-    float kDev = RTC_TEMP_DEV_COEFFICIENT;
-    float t = RTC_TEMP_TURNOVER;
-    float tDev = RTC_TEMP_DEV_TURNOVER;
-    float interim = 0.0;
-    float ppm = 0.0;
-
-    if( k < 0.0f )
-    {
-        ppm = ( k - kDev );
-    }
-    else
-    {
-        ppm = ( k + kDev );
-    }
-    interim = ( temperature - ( t - tDev ) );
-    ppm *=  interim * interim;
-
-    // Calculate the drift in time
-    interim = ( ( float ) period * ppm ) / 1000000;
-    // Calculate the resulting time period
-    interim += period;
-    interim = floor( interim );
-
-    if( interim < 0.0f )
-    {
-        interim = ( float )period;
-    }
-
-    // Calculate the resulting period
-    return ( TimerTime_t ) interim;
-}
-
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

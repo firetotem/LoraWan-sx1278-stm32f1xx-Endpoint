@@ -1,7 +1,7 @@
 #ifndef INC_BSP_H_
 #define INC_BSP_H_
 
-#include "../../HW_BSP/inc/hw.h"
+#include "hw.h"
 
 void BSP_Led_Init( void );
 void BSP_Led_On( void );
