@@ -1,4 +1,4 @@
-#include "hw.h"
+#include "../../HW_BSP/inc/hw.h"
 
 
 static ADC_HandleTypeDef hadc;

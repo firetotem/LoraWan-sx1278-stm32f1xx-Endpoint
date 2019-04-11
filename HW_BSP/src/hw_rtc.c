@@ -34,8 +34,9 @@ Maintainer: Miguel Luis and Gregory Cristian
 /* Includes ------------------------------------------------------------------*/
 #include <math.h>
 #include <time.h>
-#include "hw.h"
 #include "stm32f1xx_hal_rtc_ex.h"
+
+#include "../../HW_BSP/inc/hw.h"
 //#include "low_power_manager.h"
 //#include "systime.h"
 
@@ -172,16 +173,16 @@ static void HW_RTC_SetConfig( void )
   RtcHandle.Instance = RTC;
 
   /* Setup prescaller and source for Tamper pin */
-  RtcHandle.Init.AsynchPrediv 	= PREDIV_A;
+  RtcHandle.Init.AsynchPrediv 	= RTC_AUTO_1_SECOND;
   RtcHandle.Init.OutPut 	= RTC_OUTPUTSOURCE_NONE;
 
   HAL_RTC_Init( &RtcHandle );
 
   /*Monday 1st January 2016*/
   RTC_DateStruct.Year 		= 0;
-  RTC_DateStruct.Month	 	= RTC_MONTH_APRIL;
+  RTC_DateStruct.Month	 	= RTC_MONTH_JANUARY;
   RTC_DateStruct.Date 		= 1;
-  RTC_DateStruct.WeekDay 	= RTC_WEEKDAY_TUESDAY;
+  RTC_DateStruct.WeekDay 	= RTC_WEEKDAY_MONDAY;
 
   HAL_RTC_SetDate(&RtcHandle , &RTC_DateStruct, RTC_FORMAT_BIN);
 
@@ -377,14 +378,14 @@ void HW_RTC_IrqHandler ( void )
  */
 void HW_RTC_DelayMs( uint32_t delay )
 {
-  TimerTime_t delayValue = 0;
-  TimerTime_t timeout = 0;
+  //TimerTime_t delayValue 	= 0;
+  TimerTime_t timeout 		= 0;
 
-  delayValue = HW_RTC_ms2Tick( delay );
+  //delayValue = HW_RTC_ms2Tick( delay );
 
-  /* Wait delay ms */
+  /* Wait delay s */
   timeout = HW_RTC_GetTimerValue( );
-  while( ( ( HW_RTC_GetTimerValue( ) - timeout ) ) < delayValue )
+  while( ( ( HW_RTC_GetTimerValue( ) - timeout ) ) < delay )
   {
     __NOP( );
   }
@@ -540,10 +541,10 @@ static void HW_RTC_StartWakeUpAlarm( uint32_t timeoutValue )
  */
 static uint64_t HW_RTC_GetCalendarValue( RTC_DateTypeDef* RTC_DateStruct, RTC_TimeTypeDef* RTC_TimeStruct )
 {
-  uint64_t calendarValue = 0;
+  //uint64_t calendarValue = 0;
 //  uint32_t first_read;
-  uint32_t correction;
-  uint32_t seconds;
+  //uint32_t correction;
+  uint32_t seconds = 0;;
 
   /* Get Time and Date*/
   HAL_RTC_GetTime( &RtcHandle, RTC_TimeStruct, RTC_FORMAT_BIN );
@@ -551,26 +552,26 @@ static uint64_t HW_RTC_GetCalendarValue( RTC_DateTypeDef* RTC_DateStruct, RTC_Ti
 
 
   /* calculte amount of elapsed days since 01/01/2000 */
-  seconds = DIVC( (DAYS_IN_YEAR * 3 + DAYS_IN_LEAP_YEAR) * RTC_DateStruct->Year, 4);
+  //seconds = DIVC( (DAYS_IN_YEAR * 3 + DAYS_IN_LEAP_YEAR) * RTC_DateStruct->Year, 4);
 
-  correction = ( (RTC_DateStruct->Year % 4) == 0 ) ? DAYS_IN_MONTH_CORRECTION_LEAP : DAYS_IN_MONTH_CORRECTION_NORM;
+  //correction = ( (RTC_DateStruct->Year % 4) == 0 ) ? DAYS_IN_MONTH_CORRECTION_LEAP : DAYS_IN_MONTH_CORRECTION_NORM;
 
-  seconds +=( DIVC( (RTC_DateStruct->Month-1)*(30+31) ,2 ) - (((correction>> ((RTC_DateStruct->Month-1)*2) )&0x3)));
+  //seconds +=( DIVC( (RTC_DateStruct->Month-1)*(30+31) ,2 ) - (((correction>> ((RTC_DateStruct->Month-1)*2) )&0x3)));
 
-  seconds += (RTC_DateStruct->Date -1);
+  //seconds += (RTC_DateStruct->Date - 1);
 
   /* convert from days to seconds */
-  seconds *= SECONDS_IN_1DAY;
+  //seconds *= SECONDS_IN_1DAY;
 
   seconds += ( ( uint32_t )RTC_TimeStruct->Seconds +
              ( ( uint32_t )RTC_TimeStruct->Minutes * SECONDS_IN_1MINUTE ) +
-             ( ( uint32_t )RTC_TimeStruct->Hours * SECONDS_IN_1HOUR ) ) ;
+             ( ( uint32_t )RTC_TimeStruct->Hours   * SECONDS_IN_1HOUR ) ) ;
 
 
 
-  calendarValue = (((uint64_t) seconds) << N_PREDIV_S) + ( PREDIV_S );
+  //calendarValue = (((uint64_t) seconds) << N_PREDIV_S) + ( PREDIV_S );
 
-  return( calendarValue );
+  return ( seconds );
 }
 
 /*!

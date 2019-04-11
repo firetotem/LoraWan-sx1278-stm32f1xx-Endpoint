@@ -1,5 +1,6 @@
-#include "hw.h"
-#include "vcom.h"
+#include "../../HW_BSP/inc/vcom.h"
+
+#include "../../HW_BSP/inc/hw.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/

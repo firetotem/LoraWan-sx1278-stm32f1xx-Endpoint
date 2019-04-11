@@ -1,6 +1,6 @@
-#include "hw.h"
-#include "vcom.h"
 #include "utilities.h"
+#include "../../HW_BSP/inc/hw.h"
+#include "../../HW_BSP/inc/vcom.h"
 
 /*!
  *  \brief Unique Devices IDs register set ( STM32F1xxx )
@@ -13,34 +13,7 @@
  * \brief ADC Vbat measurement constants
  */
 
- /* Internal voltage reference, parameter VREFINT_CAL*/
-#define VREFINT_CAL       ((uint16_t*) ((uint32_t) 0x1FF800F8))
 #define LORAWAN_MAX_BAT   254
-
-
-/* Internal temperature sensor: constants data used for indicative values in  */
-/* this example. Refer to device datasheet for min/typ/max values.            */
-
-/* Internal temperature sensor, parameter TS_CAL1: TS ADC raw data acquired at
- *a temperature of 110 DegC (+-5 DegC), VDDA = 3.3 V (+-10 mV). */
-#define TEMP30_CAL_ADDR   ((uint16_t*) ((uint32_t) 0x1FF8007A))
-
-/* Internal temperature sensor, parameter TS_CAL2: TS ADC raw data acquired at
- *a temperature of  30 DegC (+-5 DegC), VDDA = 3.3 V (+-10 mV). */
-#define TEMP110_CAL_ADDR  ((uint16_t*) ((uint32_t) 0x1FF8007E))
-
-/* Vdda value with which temperature sensor has been calibrated in production
-   (+-10 mV). */
-#define VDDA_TEMP_CAL                  ((uint32_t) 3000)
-
-
-#define COMPUTE_TEMPERATURE(TS_ADC_DATA, VDDA_APPLI)                           	\
-  ((((( ((int32_t)((TS_ADC_DATA * VDDA_APPLI) / VDDA_TEMP_CAL)                  \
-        - (int32_t) *TEMP30_CAL_ADDR)                                          	\
-     ) * (int32_t)(110 - 30)                                                   	\
-    )<<8) / (int32_t)(*TEMP110_CAL_ADDR - *TEMP30_CAL_ADDR)                     \
-   ) + (30<<8)                                                                  \
-  )
 
 /*!
  * Flag to indicate if the MCU is Initialized

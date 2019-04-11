@@ -13,7 +13,7 @@
 
 #include <string.h>
 #include <stdio.h>
-#include "hw_conf.h"
+#include "../../HW_BSP/inc/hw_conf.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/

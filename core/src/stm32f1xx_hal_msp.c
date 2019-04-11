@@ -1,4 +1,4 @@
-#include "hw.h"
+#include "../../HW_BSP/inc/hw.h"
 
 /* when fast wake up is enabled, the mcu wakes up in ~20us  * and
  * does not wait for the VREFINT to be settled. THis is ok for
@@ -20,21 +20,21 @@
   * @retval HAL status
   */
 
-//HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
-//{
-//   /* Return function status */
-  //return HAL_OK;
-//}
+HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
+{
+   /* Return function status */
+  return HAL_OK;
+}
 
 /**
   * @brief This function provides delay (in ms)
   * @param Delay: specifies the delay time length, in milliseconds.
   * @retval None
   */
-//void HAL_Delay(__IO uint32_t Delay)
-//{
-//  HW_RTC_DelayMs( Delay ); /* based on RTC */
-//}
+void HAL_Delay(__IO uint32_t Delay)
+{
+  HW_RTC_DelayMs( Delay ); /* based on RTC */
+}
 
 /**
   * @brief  Initializes the MSP.
@@ -75,22 +75,26 @@ void HAL_MspInit(void)
   */
 void HAL_RTC_MspInit(RTC_HandleTypeDef *hrtc)
 {
-  RCC_OscInitTypeDef RCC_OscInitStruct;
-  RCC_PeriphCLKInitTypeDef  PeriphClkInitStruct;
+  RCC_OscInitTypeDef 		RCC_OscInitStruct;
+  RCC_PeriphCLKInitTypeDef  	PeriphClkInitStruct;
+
+  __HAL_RCC_PWR_CLK_ENABLE();
+  HAL_PWR_EnableBkUpAccess();
 
   /*##-1- Configue the RTC clock soucre ######################################*/
   /* -a- Enable LSE Oscillator */
-  RCC_OscInitStruct.OscillatorType =  RCC_OSCILLATORTYPE_LSE;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
+  RCC_OscInitStruct.OscillatorType 	= RCC_OSCILLATORTYPE_LSE | RCC_OSCILLATORTYPE_LSI;
+  RCC_OscInitStruct.PLL.PLLState 	= RCC_PLL_NONE;
+  RCC_OscInitStruct.LSEState 		= RCC_LSE_ON;
+  RCC_OscInitStruct.LSIState		= RCC_LSI_OFF;
   if(HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
   }
 
   /* -b- Select LSI as RTC clock source */
-  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
-  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+  PeriphClkInitStruct.PeriphClockSelection 	= RCC_PERIPHCLK_RTC;
+  PeriphClkInitStruct.RTCClockSelection 	= RCC_RTCCLKSOURCE_LSE;
   if(HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     Error_Handler();

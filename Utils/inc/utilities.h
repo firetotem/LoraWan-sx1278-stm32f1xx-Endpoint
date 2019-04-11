@@ -1,8 +1,8 @@
 #ifndef INC_UTILITIES_H_
 #define INC_UTILITIES_H_
 
-#include "hw_conf.h"
 #include "console.h"
+#include "../../HW_BSP/inc/hw_conf.h"
 
 /* BACKUP_PRIMASK MUST be implemented at the begining of the funtion
    that implement a critical section

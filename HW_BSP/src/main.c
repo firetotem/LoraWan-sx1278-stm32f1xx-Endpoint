@@ -1,6 +1,6 @@
 #include <stddef.h>
-#include "hw.h"
 #include "utilities.h"
+#include "../../HW_BSP/inc/hw.h"
 
 int main(void) {
 
@@ -35,7 +35,7 @@ int main(void) {
 
 
 	while (1) {
-	    HAL_Delay(1000);
+	    HAL_Delay(1);
 	    BSP_Led_Toggle();
 	    LOG( "CPU Temp: %d.%d C\n\r", HW_GetTemperatureLevel()/10, HW_GetTemperatureLevel()%10);
 	}

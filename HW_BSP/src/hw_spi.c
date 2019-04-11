@@ -1,4 +1,4 @@
-#include "hw.h"
+#include "../../HW_BSP/inc/hw.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -10,14 +10,6 @@
 static SPI_HandleTypeDef hspi;
 
 /* Private function prototypes -----------------------------------------------*/
-
-/*!
- * @brief Calculates Spi Divisor based on Spi Frequency and Mcu Frequency
- *
- * @param [IN] Spi Frequency
- * @retval Spi divisor
- */
-static uint32_t SpiFrequency( uint32_t hz );
 
 /* Exported functions ---------------------------------------------------------*/
 /*!
@@ -128,24 +120,3 @@ uint16_t HW_SPI_InOut( uint16_t txData )
 
 /* Private functions ---------------------------------------------------------*/
 
-static uint32_t SpiFrequency( uint32_t hz )
-{
-  uint32_t divisor = 0;
-  uint32_t SysClkTmp = SystemCoreClock;
-  uint32_t baudRate;
-
-  while( SysClkTmp > hz)
-  {
-    divisor++;
-    SysClkTmp= ( SysClkTmp >> 1);
-
-    if (divisor >= 7)
-      break;
-  }
-
-  baudRate =((( divisor & 0x4 ) == 0 )? 0x0 : SPI_CR1_BR_2  )|
-            ((( divisor & 0x2 ) == 0 )? 0x0 : SPI_CR1_BR_1  )|
-            ((( divisor & 0x1 ) == 0 )? 0x0 : SPI_CR1_BR_0  );
-
-  return baudRate;
-}

@@ -30,8 +30,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_it.h"
 #include "stm32f1xx_hw_conf.h"
-#include "vcom.h"
-#include "hw_rtc.h"
+
+#include "../../HW_BSP/inc/hw_rtc.h"
+#include "../../HW_BSP/inc/vcom.h"
 
 /** @addtogroup IO_Toggle
   * @{
