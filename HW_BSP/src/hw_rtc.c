@@ -66,9 +66,6 @@ typedef struct
 /* Asynchonuous prediv   */
 #define PREDIV_A                  		( 1 << (15 - N_PREDIV_S) ) - 1
 
-/* Sub-second mask definition  */
-//TODO#define HW_RTC_ALARMSUBSECONDMASK 	(N_PREDIV_S<<RTC_ALRMASSR_MASKSS_Pos)
-
 /* RTC Time base in us */
 #define USEC_NUMBER               		1000000
 #define MSEC_NUMBER               		( USEC_NUMBER / 1000 )
@@ -196,40 +193,6 @@ static void HW_RTC_SetConfig( void )
   HAL_RTC_SetTime(&RtcHandle , &RTC_TimeStruct, RTC_FORMAT_BIN);
 }
 
-
-/*! TODO
- * @brief calculates the wake up time between wake up and mcu start
- * @note resulotion in RTC_ALARM_TIME_BASE in timer ticks
- * @param none
- * @retval none
- */
-//void HW_RTC_setMcuWakeUpTime( void )
-//{
-//  RTC_TimeTypeDef RTC_TimeStruct;
-//  RTC_DateTypeDef RTC_DateStruct;
-//
-//  TimerTime_t now, hit;
-//  int16_t McuWakeUpTime;
-//
-//  if ((McuWakeUpTimeInitialized == false) &&
-//      ( HAL_NVIC_GetPendingIRQ( RTC_Alarm_IRQn ) == 1))
-//  { /* warning: works ok if now is below 30 days
-//       it is ok since it's done once at first alarm wake-up*/
-//    McuWakeUpTimeInitialized = true;
-//    now = (uint32_t) HW_RTC_GetCalendarValue( &RTC_DateStruct, &RTC_TimeStruct );
-//
-//    HAL_RTC_GetAlarm(&RtcHandle, &RTC_AlarmStructure, RTC_ALARM_A, RTC_FORMAT_BIN );
-////    hit = RTC_AlarmStructure.AlarmTime.Seconds+
-////          60*(RTC_AlarmStructure.AlarmTime.Minutes+
-////          60*(RTC_AlarmStructure.AlarmTime.Hours+
-////          24*(RTC_AlarmStructure.AlarmDateWeekDay)));
-//    //TODO   hit = ( hit << N_PREDIV_S ) + (PREDIV_S - RTC_AlarmStructure.AlarmTime.SubSeconds);
-//
-//    McuWakeUpTime = (int16_t) ((now-hit));
-//    McuWakeUpTimeCal += McuWakeUpTime;
-//  }
-//}
-
 int16_t HW_RTC_getMcuWakeUpTime( void )
 {
   return McuWakeUpTimeCal;
@@ -272,31 +235,13 @@ TimerTime_t HW_RTC_Tick2ms( uint32_t tick )
   return miliSec;
 }
 
-/*! TODO
+/*!
  * @brief Set the alarm
  * @note The alarm is set at now (read in this funtion) + timeout
  * @param timeout Duration of the Timer ticks
  */
 void HW_RTC_SetAlarm( uint32_t timeout )
 {
-//  /* we don't go in Low Power mode for timeout below MIN_ALARM_DELAY */
-//  if ( (MIN_ALARM_DELAY + McuWakeUpTimeCal ) < ((timeout - HW_RTC_GetTimerElapsedTime( ) )) )
-//  {
-//      //TODO    LPM_SetStopMode(LPM_RTC_Id , LPM_Enable );
-//  }
-//  else
-//  {
-//      //TODO    LPM_SetStopMode(LPM_RTC_Id , LPM_Disable );
-//  }
-//
-//  /*In case stop mode is required */
-//  //TODO  if( LPM_GetMode() == LPM_StopMode )
-//  {
-//    //TODO    timeout = timeout -  McuWakeUpTimeCal;
-//  }
-//
-//  HW_RTC_StartWakeUpAlarm( timeout );
-
   RtcAlarmContext.TimeOfSet 	= HAL_GetTick();
   RtcAlarmContext.Alarm		= timeout;
   RtcAlarmContext.AlarmIsActive = true;

@@ -80,7 +80,7 @@ typedef struct
     bool     RxContinuous;
     uint32_t TxTimeout;
     uint32_t RxSingleTimeout;
-}RadioFskSettings_t;
+} RadioFskSettings_t;
 
 /*!
  * Radio FSK packet handler state
@@ -96,7 +96,7 @@ typedef struct
     uint16_t NbBytes;
     uint8_t  FifoThresh;
     uint8_t  ChunkSize;
-}RadioFskPacketHandler_t;
+} RadioFskPacketHandler_t;
 
 /*!
  * Radio LoRa modem parameters
@@ -118,17 +118,17 @@ typedef struct
     bool     RxContinuous;
     uint32_t TxTimeout;
     bool     PublicNetwork;
-}RadioLoRaSettings_t;
+} RadioLoRaSettings_t;
 
 /*!
  * Radio LoRa packet handler state
  */
 typedef struct
 {
-    int8_t SnrValue;
-    int16_t RssiValue;
-    uint8_t Size;
-}RadioLoRaPacketHandler_t;
+    int8_t 	SnrValue;
+    int16_t 	RssiValue;
+    uint8_t 	Size;
+} RadioLoRaPacketHandler_t;
 
 /*!
  * Radio Settings
@@ -142,16 +142,16 @@ typedef struct
     RadioFskPacketHandler_t  FskPacketHandler;
     RadioLoRaSettings_t      LoRa;
     RadioLoRaPacketHandler_t LoRaPacketHandler;
-}RadioSettings_t;
+} RadioSettings_t;
 
 /*!
  * Radio hardware and global parameters
  */
 typedef struct SX1276_s
 {
-    uint8_t       RxTx;
-    RadioSettings_t Settings;
-}SX1276_t;
+    uint8_t       	RxTx;
+    RadioSettings_t 	Settings;
+} SX1276_t;
 
 extern SX1276_t SX1276;
 /*!
@@ -247,7 +247,7 @@ typedef struct sBoardCallback
      * \param [IN] opMode Current radio operating mode
      */
     void ( *SX1276BoardSetAntSw )( uint8_t opMode );
-}LoRaBoardCallback_t;
+} LoRaBoardCallback_t;
 
 /*!
  * ============================================================================

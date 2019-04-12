@@ -15,7 +15,7 @@ extern "C" {
 #include "hw_rtc.h"
 #include "hw_msp.h"
 #include "hw_adc.h"
-#include "sx1276.h"
+#include "utilities.h"
 #include "bsp.h"
 #include "debug.h"
 

@@ -4,6 +4,7 @@
 #include "utilities.h"
 #include "hw.h"
 #include "version.h"
+#include "Ra_02.h"
 
 #ifndef ACTIVE_REGION
 
@@ -77,6 +78,8 @@ int main(void) {
 	LOG( "Ra-2 Version: 0x%x \n\r", SX1276Read( REG_VERSION ) );
 
 	LOG( "Ra-2 RegPllHop: 0x%x \n\r", SX1276Read( REG_TEMP ) );
+
+	LOG( "RSSI value: %d \n\r", Radio.Rssi(0));
 
 	//BSP_Led_On();
 	//BSP_Led_Off();

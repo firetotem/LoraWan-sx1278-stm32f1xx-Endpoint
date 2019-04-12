@@ -33,7 +33,7 @@ typedef enum
 {
     MODEM_FSK = 0,
     MODEM_LORA,
-}RadioModems_t;
+} RadioModems_t;
 
 /*!
  * Radio driver internal state machine states definition
@@ -44,7 +44,7 @@ typedef enum
     RF_RX_RUNNING, //!< The radio is in reception state
     RF_TX_RUNNING, //!< The radio is in transmission state
     RF_CAD,        //!< The radio is doing channel activity detection
-}RadioState_t;
+} RadioState_t;
 
 /*!
  * \brief Radio driver callback functions
@@ -91,7 +91,7 @@ typedef struct
      * \param [IN] channelDetected    Channel Activity detected during the CAD
      */
     void ( *CadDone ) ( bool channelActivityDetected );
-}RadioEvents_t;
+} RadioEvents_t;
 
 /*!
  * \brief Radio driver definition

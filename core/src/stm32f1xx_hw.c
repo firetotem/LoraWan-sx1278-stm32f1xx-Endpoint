@@ -1,5 +1,6 @@
 #include "utilities.h"
 #include "hw.h"
+#include "radio.h"
 #include "vcom.h"
 
 /*!
@@ -31,7 +32,7 @@ void HW_Init( void )
   {
     HW_Adc_Init();
 
-    // Radio.IoInit( ); TODO
+    Radio.IoInit( );
 
     HW_SPI_Init( );
 
@@ -42,7 +43,6 @@ void HW_Init( void )
     BSP_Led_Init();
 
     BSP_Radio_Reset_Init();
-    // BSP_sensor_Init( ); TODO
 
     McuInitialized = true;
   }
@@ -59,7 +59,7 @@ void HW_DeInit( void )
 
   HW_SPI_DeInit( );
 
-  // Radio.IoDeInit( ); TODO
+  Radio.IoDeInit( );
 
   vcom_DeInit( );
 
@@ -73,8 +73,7 @@ void HW_DeInit( void )
   */
 static void HW_IoInit( void )
 {
-  // Radio.IoInit( ); TODO
-
+  Radio.IoInit( );
   vcom_IoInit( );
 }
 
@@ -85,8 +84,7 @@ static void HW_IoInit( void )
   */
 static void HW_IoDeInit( void )
 {
-  // Radio.IoDeInit( ); TODO
-
+  Radio.IoDeInit( );
   vcom_IoDeInit( );
 }
 

@@ -11,8 +11,8 @@
 /* Exported constants --------------------------------------------------------*/
 
 /* --------------------------- LORA I/O definition -------------------------- */
-
-#ifndef USE_SX126X_DVK
+#define RADIO_DIO_4
+#define RADIO_DIO_5
 
 #define RADIO_RESET_PORT                          GPIOA
 #define RADIO_RESET_PIN                           GPIO_PIN_0
@@ -29,31 +29,31 @@
 #define RADIO_NSS_PORT                            GPIOA
 #define RADIO_NSS_PIN                             GPIO_PIN_4
 
-#define RADIO_BUSY_PORT                           GPIOB
-#define RADIO_BUSY_PIN                            GPIO_PIN_3
-
 #define RADIO_DIO_0_PORT                          GPIOA
 #define RADIO_DIO_0_PIN                           GPIO_PIN_10
 
 #define RADIO_DIO_1_PORT                          GPIOB
-#define RADIO_DIO_1_PIN                           GPIO_PIN_4
+#define RADIO_DIO_1_PIN                           GPIO_PIN_3
 
 #define RADIO_DIO_2_PORT                          GPIOB
-#define RADIO_DIO_2_PIN                           GPIO_PIN_5
+#define RADIO_DIO_2_PIN                           GPIO_PIN_4
 
 #define RADIO_DIO_3_PORT                          GPIOB
-#define RADIO_DIO_3_PIN                           GPIO_PIN_4
+#define RADIO_DIO_3_PIN                           GPIO_PIN_5
 
-#define RADIO_ANT_SWITCH_POWER_PORT               GPIOA
-#define RADIO_ANT_SWITCH_POWER_PIN                GPIO_PIN_9
+#ifdef RADIO_DIO_4
+  #define RADIO_DIO_4_PORT                        GPIOB
+  #define RADIO_DIO_4_PIN                         GPIO_PIN_6
+#endif
 
-#define DEVICE_SEL_PORT                           GPIOA
-#define DEVICE_SEL_PIN                            GPIO_PIN_4
+#ifdef RADIO_DIO_5
+  #define RADIO_DIO_5_PORT                        GPIOB
+  #define RADIO_DIO_5_PIN                         GPIO_PIN_7
+#endif
 
 #define RADIO_LEDRX_PORT                          GPIOC
 #define RADIO_LEDRX_PIN                           GPIO_PIN_13
 
-#endif
 
 /* --------------------------- SPI MACRO redefinition -------------------------- */
 #define SPI_CLK_ENABLE()                __HAL_RCC_SPI1_CLK_ENABLE()
