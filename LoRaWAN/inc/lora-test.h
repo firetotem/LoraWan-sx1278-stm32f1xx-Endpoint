@@ -1,21 +1,7 @@
- /*
- / _____)             _              | |
-( (____  _____ ____ _| |_ _____  ____| |__
- \____ \| ___ |    (_   _) ___ |/ ___)  _ \
- _____) ) ____| | | || |_| ____( (___| | | |
-(______/|_____)_|_|_| \__)_____)\____)_| |_|
-    (C)2013 Semtech
-
-Description: LoRaMac classA device implementation
-
-License: Revised BSD License, see LICENSE.TXT file include in the project
-
-Maintainer: Miguel Luis, Gregory Cristian and Wael Guibene
-*/
 /******************************************************************************
-  * @file    lora_mac_version.h
+  * @file    lora_test.h
   * @author  MCD Application Team
-  * @brief   defines the lora mac version
+  * @brief   lora API to drive the lora state Machine
   ******************************************************************************
   * @attention
   *
@@ -32,30 +18,33 @@ Maintainer: Miguel Luis, Gregory Cristian and Wael Guibene
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 
-#ifndef __LORA_MAC_VERSION_H__
-#define __LORA_MAC_VERSION_H__
+#ifndef __LORA_TEST_H__
+#define __LORA_TEST_H__
 
 #ifdef __cplusplus
  extern "C" {
 #endif
    
-/* Includes ------------------------------------------------------------------*/
+ /* Includes ------------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-
-/*the 4 MSBs define the version based on Github version         */
-/*https://github.com/Lora-net/LoRaMac-node/wiki/LoRaMAC-node-Wiki*/
-/* version 4.4.2-rc.5 from develop branch */
-#define LORA_MAC_VERSION   (uint32_t) 0x44250000
    
+#define CERTIF_PORT 224
 /* Exported types ------------------------------------------------------------*/
 /* External variables --------------------------------------------------------*/
 /* Exported macros -----------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */ 
+bool certif_running(void);
+
+void certif_DownLinkIncrement( void );
+
+void certif_linkCheck(MlmeConfirm_t *mlmeConfirm);
+
+void certif_rx( McpsIndication_t *mcpsIndication, MlmeReqJoin_t* JoinParameters);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /*__LORA_MAC_VERSION_H__*/
+#endif /*__LORA_TEST_H__*/
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -1,4 +1,4 @@
- /*
+/*
  / _____)             _              | |
 ( (____  _____ ____ _| |_ _____  ____| |__
  \____ \| ___ |    (_   _) ___ |/ ___)  _ \
@@ -6,16 +6,16 @@
 (______/|_____)_|_|_| \__)_____)\____)_| |_|
     (C)2013 Semtech
 
-Description: LoRaMac classA device implementation
+Description: Timer objects and scheduling management
 
 License: Revised BSD License, see LICENSE.TXT file include in the project
 
-Maintainer: Miguel Luis, Gregory Cristian and Wael Guibene
+Maintainer: Miguel Luis and Gregory Cristian
 */
 /******************************************************************************
-  * @file    lora_mac_version.h
+  * @file    timer.h
   * @author  MCD Application Team
-  * @brief   defines the lora mac version
+  * @brief   wrapper to  timer server
   ******************************************************************************
   * @attention
   *
@@ -29,33 +29,22 @@ Maintainer: Miguel Luis, Gregory Cristian and Wael Guibene
   *
   ******************************************************************************
   */
-
+  
 /* Define to prevent recursive inclusion -------------------------------------*/
-
-#ifndef __LORA_MAC_VERSION_H__
-#define __LORA_MAC_VERSION_H__
+#ifndef __TIMER_H__
+#define __TIMER_H__
 
 #ifdef __cplusplus
  extern "C" {
 #endif
-   
-/* Includes ------------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
 
-/*the 4 MSBs define the version based on Github version         */
-/*https://github.com/Lora-net/LoRaMac-node/wiki/LoRaMAC-node-Wiki*/
-/* version 4.4.2-rc.5 from develop branch */
-#define LORA_MAC_VERSION   (uint32_t) 0x44250000
-   
-/* Exported types ------------------------------------------------------------*/
-/* External variables --------------------------------------------------------*/
-/* Exported macros -----------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */ 
+/* Includes ------------------------------------------------------------------*/
+#include "timeServer.h"
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /*__LORA_MAC_VERSION_H__*/
+#endif /* __TIMER_H__*/
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

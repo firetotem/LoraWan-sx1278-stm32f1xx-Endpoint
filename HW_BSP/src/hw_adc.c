@@ -90,12 +90,12 @@ uint16_t HW_GetTemperatureLevel( void )
   return adcSample;
 }
 
-uint16_t HW_GetBatteryLevel( void )
+uint8_t HW_GetBatteryLevel( void )
 {
   uint16_t vbatLevel = HW_Adc_ReadChannel( ADC_CHANNEL_VREFINT );
 
   vbatLevel *= 33000;
   vbatLevel /= 4096;
 
-  return vbatLevel;
+  return (uint8_t)vbatLevel;
 }

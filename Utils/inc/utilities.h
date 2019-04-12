@@ -3,6 +3,7 @@
 
 #include "console.h"
 #include "hw_conf.h"
+#include "systime.h"
 
 /* BACKUP_PRIMASK MUST be implemented at the begining of the funtion
    that implement a critical section
@@ -27,6 +28,7 @@
 /* delay definition */
  #define DelayMs(n)             HAL_Delay(n)
 
+#define PPRINTF(...)     do{ } while( 0!= TraceSend(__VA_ARGS__) ) //Polling Mode
 #define PRINTF(...)     do{  TraceSend(__VA_ARGS__); } while(0)
 #define PRINTNOW()      do{                                                           \
                           SysTime_t stime  =SysTimeGetMcuTime();                      \

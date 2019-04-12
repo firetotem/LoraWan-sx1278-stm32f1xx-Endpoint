@@ -1,5 +1,5 @@
 #include "hw.h"
-
+#include "timeServer.h"
 /* when fast wake up is enabled, the mcu wakes up in ~20us  * and
  * does not wait for the VREFINT to be settled. THis is ok for
  * most of the case except when adc must be used in this case before
