@@ -83,7 +83,7 @@ typedef struct SysTime_s
 {
     uint32_t Seconds;
     int16_t  SubSeconds;
-}SysTime_t;
+} SysTime_t;
 
 /*!
  * \brief Adds 2 SysTime_t values
