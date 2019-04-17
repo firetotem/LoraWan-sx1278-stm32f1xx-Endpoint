@@ -127,7 +127,7 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef *hrtc)
   * @param  hrtc: RTC handle
   * @retval None
   */
-void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
+void SW_RTC_ALarm_IrqHandler( void )
 {
   TimerIrqHandler( );
 }

@@ -35,7 +35,7 @@ Maintainer: Miguel Luis and Gregory Cristian
 #include <math.h>
 #include <time.h>
 
-#include "hw.h"
+#include "hw_rtc.h"
 //#include "low_power_manager.h"
 //#include "systime.h"
 
@@ -555,9 +555,9 @@ uint32_t HW_RTC_GetCalendarTime( uint16_t *mSeconds)
 
   uint64_t calendarValue = HW_RTC_GetCalendarValue( &RTC_DateStruct, &RTC_TimeStruct );
 
-  uint32_t seconds = (uint32_t) calendarValue >>N_PREDIV_S;
+  uint32_t seconds = (uint32_t) calendarValue >> N_PREDIV_S;
 
-  ticks =  (uint32_t) calendarValue&PREDIV_S;
+  ticks =  (uint32_t) calendarValue & PREDIV_S;
 
   *mSeconds = HW_RTC_Tick2ms(ticks);
 

@@ -145,7 +145,7 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
     HAL_IncTick();
-    HW_RTC_IrqHandler();
+    //HW_RTC_IrqHandler();
     SW_RTC_IrqHandler();
 }
 

@@ -103,12 +103,12 @@ void TimerStart( TimerEvent_t *obj )
 
   if( TimerListHead == NULL )
   {
-    HW_RTC_SetTimerContext( );
+    SW_RTC_SetTimeContext();
     TimerInsertNewHeadTimer( obj ); // insert a timeout at now+obj->Timestamp
   }
   else
   {
-    elapsedTime = HW_RTC_GetTimerElapsedTime( );
+    elapsedTime = SW_RTC_GetElapsedTime();
     obj->Timestamp += elapsedTime;
 
     if( obj->Timestamp < TimerListHead->Timestamp )
@@ -135,8 +135,8 @@ void TimerIrqHandler( void )
   TimerEvent_t* cur;
   TimerEvent_t* next;
 
-  uint32_t old =  HW_RTC_GetTimerContext( );
-  uint32_t now =  HW_RTC_SetTimerContext( );
+  uint32_t old =  SW_RTC_GetTimeContext();
+  uint32_t now =  SW_RTC_GetTimeContext();
   uint32_t DeltaContext = now - old; //intentionnal wrap around
 
   /* Update timeStamp based upon new Time Reference*/
@@ -168,7 +168,7 @@ void TimerIrqHandler( void )
 
 
   // remove all the expired object from the list
-  while( ( TimerListHead != NULL ) && ( TimerListHead->Timestamp < HW_RTC_GetTimerElapsedTime(  )  ))
+  while( ( TimerListHead != NULL ) && ( TimerListHead->Timestamp < SW_RTC_GetElapsedTime() ))
   {
    cur 			= TimerListHead;
    TimerListHead 	= TimerListHead->Next;
@@ -215,7 +215,7 @@ void TimerStop( TimerEvent_t *obj )
       }
       else
       {
-        HW_RTC_StopAlarm( );
+        SW_RTC_StopAlarm();
         TimerListHead = NULL;
       }
     }
@@ -276,7 +276,7 @@ void TimerSetValue( TimerEvent_t *obj, uint32_t value )
 
   TimerStop( obj );
 
-  minValue = HW_RTC_GetMinimumTimeout( );
+  minValue = SW_RTC_GetMinimumTimeout();
 
   if( ticks < minValue )
   {
@@ -292,7 +292,7 @@ TimerTime_t TimerGetCurrentTime( void )
 {
 //  uint32_t now = HW_RTC_GetTimerValue( );
 //  return  HW_RTC_Tick2ms(now);
-  return HAL_GetTick();
+  return SW_RTC_GetTick();
 }
 
 /* +++ */
@@ -303,7 +303,7 @@ TimerTime_t TimerGetElapsedTime( TimerTime_t past )
 //  /* intentional wrap around. Works Ok if tick duation below 1ms */
 //  return HW_RTC_Tick2ms( nowInTicks- pastInTicks );
 
-  uint32_t nowInTicks = HAL_GetTick();
+  uint32_t nowInTicks = SW_RTC_GetTick();
   return (nowInTicks - past);
 }
 
@@ -325,15 +325,16 @@ static bool TimerExists( TimerEvent_t *obj )
 /* +++ */
 static void TimerSetTimeout( TimerEvent_t *obj )
 {
-  int32_t minTicks= HW_RTC_GetMinimumTimeout( );
+  int32_t minTicks = SW_RTC_GetMinimumTimeout();
+
   obj->IsNext2Expire = true;
 
   // In case deadline too soon
-  if(obj->Timestamp  < (HW_RTC_GetTimerElapsedTime(  ) + minTicks) )
+  if(obj->Timestamp  < (SW_RTC_GetElapsedTime() + minTicks) )
   {
-    obj->Timestamp = HW_RTC_GetTimerElapsedTime(  ) + minTicks;
+    obj->Timestamp = SW_RTC_GetElapsedTime() + minTicks;
   }
-  HW_RTC_SetAlarm( obj->Timestamp );
+  SW_RTC_SetAlarm( obj->Timestamp );
 }
 
 //TimerTime_t TimerTempCompensation( TimerTime_t period, float temperature )
